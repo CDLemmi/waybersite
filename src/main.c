@@ -26,7 +26,7 @@ void handle_client(int client_fd) {
 		"Content-Type: text\r\n"
 		"Connection: close\r\n"
 		"\r\n"
-		"<html><body><h1>Hello World!</h1></body></html>";
+		"<html><body><h1>Hello Wayber!</h1></body></html>";
 
 	write(client_fd, response, strlen(response));
 	close(client_fd);
