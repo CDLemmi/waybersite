@@ -6,6 +6,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+#include "httpparser.h"
 
 #define PORT 8080
 #define BUFFER_SIZE 4096
@@ -21,12 +22,17 @@ void handle_client(int client_fd) {
 
 	printf("Request:\n%s\n", buffer);
 
+	HTTPRequest r = parse_http_request(buffer);
+	printf("method=%d;path=%s;host=%s;session=%s;connection=%d\n\n", r.request_method, r.path, r.host, r.session_cookie, r.connection_keep_alive);
+
 	char* response =
 		"HTTP/1.1 200 OK\r\n"
 		"Content-Type: text\r\n"
 		"Connection: close\r\n"
 		"\r\n"
 		"<html><body><h1>Hello Wayber!</h1>deploy test 1 successful</body></html>";
+
+
 
 	write(client_fd, response, strlen(response));
 	close(client_fd);
