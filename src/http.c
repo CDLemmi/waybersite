@@ -86,22 +86,21 @@ HTTPRequest parse_http_request(char* s) {
 		if(!strcmp(name, "Host")) {
 			strcpy(r.host, value);
 		} else if(!strcmp(name, "Cookie")) {
-			char pair_s[512] = {0};
-			strcpy(pair_s, value);
+			char* pair_s = value;
 			while(1) {
 				char* pair_end = strchr(pair_s, ';');
 				if(pair_end == NULL) pair_end = pair_s + strlen(pair_s);
 				char* equals_pos = strchr(pair_s, '=');
-				char cookie_name[256];
+				char cookie_name[256] = {0};
 				strncpy(cookie_name, pair_s, equals_pos - pair_s);
-				char cookie_value[256];
+				char cookie_value[256] = {0};
 				strncpy(cookie_value, equals_pos + 1, pair_end - equals_pos - 1);
 				if(!strcmp(cookie_name, "session")) {
 					strcpy(r.session_cookie, cookie_value);
 				}
 				if(*pair_end == ';') {
 					while(*(++pair_end) == ' ');
-					strcpy(pair_s, pair_end);
+					pair_s = pair_end;
 				} else {
 					break;
 				}
