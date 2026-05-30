@@ -6,9 +6,11 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <sqlite3.h>
+#include <cjson/cJSON.h>
 
 #include "http.h"
 #include "db.h"
+#include "users.h"
 
 #define PORT 8080
 #define BUFFER_SIZE 4096
@@ -32,21 +34,19 @@ char* handle_api_request(char* json_request, char* api_endpoint, int user_id, in
 	return NULL;
 }
 
-char* handle_user_login(char* content) {
-	char* session_id = malloc(9);
-	session_id = "A2345678";
-	return session_id;
-}
 
 
 
 
 
-HTTPResponse handle_request(HTTPRequest request) {
+HTTPResponse handle_request(HTTPRequest request, Database db) {
 	HTTPResponse response = {0};
 
 	if(!strncmp(request.path, "/userapi/signin", sizeof("/userapi/signin"))) {
-		char* session_id = handle_user_login(request.content);
+		cJSON* json = cJSON_ParseWithLength(request.content, request.content_length);
+		char* name = cJSON_GetObjectItem(json, "username")->valuestring;
+		char* password = cJSON_GetObjectItem(json, "password")->valuestring;
+		char* session_id = handle_user_login(name, password, db);
 		if(session_id == NULL) {
 			response.status_code = 401;
 		} else {
@@ -56,6 +56,7 @@ HTTPResponse handle_request(HTTPRequest request) {
 			free(session_id); 
 			strcpy(response.set_cookie, set_cookie);
 		}
+		cJSON_Delete(json);
 	} else if(!strncmp(request.path, "/api/", 5)) {
 		int user_id = verify_session_cookie(request.session_cookie);
 		if(user_id < 0) {
@@ -110,7 +111,7 @@ HTTPResponse handle_request(HTTPRequest request) {
 }
 
 
-void handle_connection(int client_fd) {
+void handle_connection(int client_fd, Database db) {
 
 
 
@@ -119,6 +120,7 @@ void handle_connection(int client_fd) {
 	
 		read(client_fd, buffer, BUFFER_SIZE - 1);
 
+		if(strlen(buffer) == 0) continue;
 		printf("Request:\n%s\n", buffer);
 
 		HTTPRequest request = parse_http_request(buffer);
@@ -126,7 +128,7 @@ void handle_connection(int client_fd) {
 
 		//if(strcmp(r.host, "www.waybersite.de")) break;
 		
-		HTTPResponse response = handle_request(request);
+		HTTPResponse response = handle_request(request, db);
 
 		write_http_response(response, client_fd);
 
@@ -147,6 +149,8 @@ int main() {
 	printf("Hello World!\n");
 
 	Database db = init_database();
+	
+	create_user(0, "root", "test", db);
 
 	int server_fd, client_fd;
 	struct sockaddr_in addr;
@@ -167,7 +171,7 @@ int main() {
 	while(1) {
 		client_fd = accept(server_fd, NULL, NULL);
 
-		handle_connection(client_fd);
+		handle_connection(client_fd, db);
 	
 	}
 
