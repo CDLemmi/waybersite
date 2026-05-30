@@ -58,6 +58,35 @@ Database init_database() {
 }
 
 
+int db_set_username(Database db, int id, char* name) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "UDPATE users SET name = ? WHERE id = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
+	sqlite3_bind_int(s, 2, id);
+	if(sqlite3_step(s) != SQLITE_DONE) {
+		return 1;
+	}
+	sqlite3_finalize(s);
+	return 0;
+}
+
+
+
+
+char* db_get_username(Database db, int id) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT name FROM users WHERE id = ?", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	if(sqlite3_step(s) != SQLITE_ROW) {
+		return NULL;
+	}
+	char* output = sqlite3_column_text(s, 0);
+	char* name = calloc(strlen(output) + 1, 1);
+	strcpy(name, output);
+	sqlite3_finalize(s);
+	return name;
+}
+
 void db_create_session(Database db, char* session_id, int user_id) {
 	int current_time = time(NULL);
 	int expires_at = current_time + 604800;
@@ -90,6 +119,19 @@ int db_verify_user_session(Database db, char* session_id) {
 	return sqlite3_column_int(s, 0);
 }
 
+char* db_get_hash(Database db, int id) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT hash FROM users WHERE id = ?", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	if(sqlite3_step(s) != SQLITE_ROW) {
+		return NULL;
+	}
+	char* output = sqlite3_column_blob(s, 0);
+	char* hash = malloc(HASH_SIZE);
+	memcpy(hash, output, HASH_SIZE);
+	sqlite3_finalize(s);
+	return hash;
+}
 
 
 char* db_get_user_hash_and_id(Database db, char* name, int* user_id) {

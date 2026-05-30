@@ -16,21 +16,23 @@
 #define BUFFER_SIZE 4096
 
 
-//TODO implement
-int verify_session_cookie(char* session_cookie) {
-	return 0;
-}
 
-char* handle_api_request(char* json_request, char* api_endpoint, int user_id, int* error) {
-	char* json_response = calloc(2048, sizeof(char));
-	if(!strncmp(api_endpoint, "account_page", sizeof("account_page"))) {
-		strcpy(json_response, "{\"username\": \"Albon\"}");
+//error = 0 -> false
+char* handle_api_request(cJSON* request_body, char* api_endpoint, int user_id, int* error, Database db) {
+	if(!strcmp(api_endpoint, "account_page")) {
+		char* name = db_get_username(db, user_id);
+		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(name));
+		free(name);
+		char* json_response = cJSON_Print(json);
+		cJSON_Delete(json);
 		return json_response;
 	}
-
-	if(!strncmp(api_endpoint, "user_change", sizeof("user_change"))) {
-		
+	if(!strcmp(api_endpoint, "username-change")) {
+		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
+		*error = db_set_username(db, user_id, name);
 	}
+
 	return NULL;
 }
 
@@ -42,10 +44,11 @@ char* handle_api_request(char* json_request, char* api_endpoint, int user_id, in
 HTTPResponse handle_request(HTTPRequest request, Database db) {
 	HTTPResponse response = {0};
 
-	if(!strncmp(request.path, "/userapi/signin", sizeof("/userapi/signin"))) {
+	if(!strcmp(request.path, "/userapi/signin")) {
 		cJSON* json = cJSON_ParseWithLength(request.content, request.content_length);
-		char* name = cJSON_GetObjectItem(json, "username")->valuestring;
-		char* password = cJSON_GetObjectItem(json, "password")->valuestring;
+		cJSON* body = cJSON_GetObjectItem(json, "body");
+		char* name = cJSON_GetObjectItem(body, "username")->valuestring;
+		char* password = cJSON_GetObjectItem(body, "password")->valuestring;
 		char* session_id = handle_user_login(name, password, db);
 		if(session_id == NULL) {
 			response.status_code = 401;
@@ -57,13 +60,29 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			strcpy(response.set_cookie, set_cookie);
 		}
 		cJSON_Delete(json);
+	} else if(!strcmp(request.path, "/userapi/changepw")) {
+		cJSON* json = cJSON_ParseWithLength(request.content, request.content_length);
+		cJSON* body = cJSON_GetObjectItem(json, "body");
+		char* name = cJSON_GetObjectItem(body, "username")->valuestring;
+		char* pw_old = cJSON_GetObjectItem(body, "pw_old")->valuestring;
+		char* pw_new = cJSON_GetObjectItem(body, "pw_new")->valuestring;
+		if(change_password(name, pw_old, pw_new, db)) {
+			response.status_code = 401;
+		} else {
+			response.status_code = 200;
+		}
+		cJSON_Delete(json);
 	} else if(!strncmp(request.path, "/api/", 5)) {
-		int user_id = verify_session_cookie(request.session_cookie);
+		int user_id = db_verify_user_session(db, request.session_cookie);
 		if(user_id < 0) {
 			response.status_code = 401;
 		} else {
 			int error = 0;
-			char* json_response = handle_api_request(request.content, request.path + 5, user_id, &error);
+			cJSON* json = cJSON_ParseWithLength(request.content, request.content_length);
+			cJSON* body = cJSON_GetObjectItem(json, "body");
+
+			char* json_response = handle_api_request(body, request.path + 5, user_id, &error, db);
+			cJSON_Delete(body);
 			if(error) {
 				response.status_code = 400;
 			} else {

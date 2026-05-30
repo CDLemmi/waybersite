@@ -29,6 +29,23 @@ char* create_session_id() {
 }
 
 
+//0 = success
+//1 = wrong
+int change_password(char* name, char* pw_old, char* pw_new, Database db) {
+	int user_id = 0;
+	char* db_hash = db_get_user_hash_and_id(db, name, &user_id);
+	if(db_hash == NULL) return 1;
+	if(crypto_pwhash_str_verify(db_hash, pw_old, strlen(pw_old))) return 1;
+	
+	
+	char hash[HASH_SIZE];
+	hash_password(hash, pw_new);
+
+
+	db_set_user(db, user_id, name, hash);
+
+	return 0;
+}
 
 
 void hash_password(char* hash, char* password) {
@@ -68,6 +85,7 @@ char* handle_user_login(char* name, char* password, Database db) {
 
 	db_create_session(db, session_id, user_id);
 
+	free(db_hash);
 	return session_id;
 	
 }
