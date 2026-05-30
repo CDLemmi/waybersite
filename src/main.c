@@ -69,7 +69,7 @@ HTTPResponse handle_request(HTTPRequest request) {
 		if(ext == NULL + 1) {
 			ext_not_supported = 1;
 		} else if(!strcmp(ext, "html")) {
-			strcpy(response.content_type, "text/html");
+			strcpy(response.content_type, "text/html; charset=utf-8");
 		} else if(!strcmp(ext, "css")) {
 			strcpy(response.content_type, "text/css");
 		} else if(!strcmp(ext, "js")) {

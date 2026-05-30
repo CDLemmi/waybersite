@@ -1,0 +1,94 @@
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: #18191B;
+    color: white;
+    font-family: Arial;
+}
+
+.header {
+    display: flex;
+    font-size: 48px;
+    font-weight: bold;
+    flex-direction: column;
+    margin-top: -35px;
+    margin-left: 15px;
+}
+
+.footer
+{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0; 
+    width: 100%;
+    margin-left: 15px;
+    font-size: 20px
+}
+
+.seperator {
+    margin: -25px 0px 10px;
+    height: 2px;
+    width: 99%;
+    background: white;
+}
+
+.login_box {
+    display: flex;
+    flex-direction: column;
+    margin: 70px auto;
+    width: 400px;
+    height: 290px;
+    border: 3px solid white ;
+    align-items: center;
+    gap: 20px
+}
+
+.login_content
+{
+    align-self: flex-start;
+    margin-left: 15px;
+    margin-top: -5px;
+    margin-bottom: -5px;
+    width: 90%;
+}
+
+#cookie_box
+{
+    position: fixed;
+    bottom: 100px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid white;
+    width: 600px;
+    height: 150px;
+    padding-left: 15px;
+    padding-top: 5px;
+    font-size: 20px;
+    background-color: rgb(43, 6, 59);
+    z-index: 999;
+}
+
+#cookie_box > * {
+    max-width: 97%;
+}
+
+#login_button
+{
+    margin: 20px 10px;
+    padding: 5px 80px;
+}
+
+#under_construction
+{
+    display: flex;
+    flex-direction: column;
+    border: 3px solid orange;
+    width: 400px;
+    height: 150px;
+    margin: 0px auto;
+    align-items: center;
+    color: yellow
+}
