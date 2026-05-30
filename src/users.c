@@ -60,6 +60,7 @@ void create_user(int id, char* name, char* password, Database db) {
 char* handle_user_login(char* name, char* password, Database db) {
 	int user_id = 0;
 	char* db_hash = db_get_user_hash_and_id(db, name, &user_id);
+	if(db_hash == NULL) return NULL;
 	
 	if(crypto_pwhash_str_verify(db_hash, password, strlen(password))) return NULL;
 
