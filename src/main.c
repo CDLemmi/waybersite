@@ -5,8 +5,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <sqlite3.h>
 
 #include "http.h"
+#include "db.h"
 
 #define PORT 8080
 #define BUFFER_SIZE 4096
@@ -18,6 +20,15 @@ int verify_session_cookie(char* session_cookie) {
 }
 
 char* handle_api_request(char* json_request, char* api_endpoint, int user_id, int* error) {
+	char* json_response = calloc(2048, sizeof(char));
+	if(!strncmp(api_endpoint, "account_page", sizeof("account_page"))) {
+		strcpy(json_response, "{\"username\": \"Albon\"}");
+		return json_response;
+	}
+
+	if(!strncmp(api_endpoint, "user_change", sizeof("user_change"))) {
+		
+	}
 	return NULL;
 }
 
@@ -42,7 +53,7 @@ HTTPResponse handle_request(HTTPRequest request) {
 			response.status_code = 200;
 			char set_cookie[1024] = "session=";
 			strcat(set_cookie, session_id);
-			free(session_id);
+			free(session_id); 
 			strcpy(response.set_cookie, set_cookie);
 		}
 	} else if(!strncmp(request.path, "/api/", 5)) {
@@ -134,7 +145,9 @@ void handle_connection(int client_fd) {
 
 int main() {
 	printf("Hello World!\n");
-	
+
+	Database db = init_database();
+
 	int server_fd, client_fd;
 	struct sockaddr_in addr;
 	int opt = 1;

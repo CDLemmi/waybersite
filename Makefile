@@ -8,7 +8,7 @@ TARGET = main
 SRCS = $(wildcard src/*.c)
 OBJS = $(SRCS:src/%.c=build/%.o)
 
-LIBS = -lsodium -lsqlite3 -fsanitize=address
+LIBS = -lsodium -lsqlite3 -lcjson -fsanitize=address
 
 
 
