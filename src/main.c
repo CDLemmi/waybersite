@@ -28,9 +28,15 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, int user_id, i
 		cJSON_Delete(json);
 		return json_response;
 	}
-	if(!strcmp(api_endpoint, "username-change")) {
+	else if(!strcmp(api_endpoint, "username-change")) {
 		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
 		*error = db_set_username(db, user_id, name);
+	}
+	else
+	{
+		*error = 1;
+		char* errMes = calloc(2048,1);
+		strcpy(errMes, "{\"errorMes\": \"Unused API endpoint\"}");
 	}
 
 	return NULL;
@@ -56,6 +62,7 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			response.status_code = 200;
 			char set_cookie[1024] = "session=";
 			strcat(set_cookie, session_id);
+			strcat(set_cookie, ";path=/;");
 			free(session_id); 
 			strcpy(response.set_cookie, set_cookie);
 		}
@@ -88,8 +95,13 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			} else {
 				response.status_code = 200;
 			}
-			http_response_set_content_str(&response, json_response);
-			free(json_response);
+
+			if(json_response != NULL)
+			{
+			    http_response_set_content_str(&response, json_response);
+				free(json_response);
+			}
+
 			strcpy(response.content_type, "application/json");
 		}
 	} else {

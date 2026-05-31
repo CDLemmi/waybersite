@@ -60,7 +60,7 @@ Database init_database() {
 
 int db_set_username(Database db, int id, char* name) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "UDPATE users SET name = ? WHERE id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "UPDATE users SET name = ? WHERE id = ?;", -1, &s, NULL);
 	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
 	sqlite3_bind_int(s, 2, id);
 	if(sqlite3_step(s) != SQLITE_DONE) {
