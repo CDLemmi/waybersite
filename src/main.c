@@ -59,6 +59,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int i;
 		user_create(name, password, &i, db);
 	} else if(!strcmp(api_endpoint, "user-remove")) {
+		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
+		db_delete_user(db, id);
 	} else if(!strcmp(api_endpoint, "user-set-name")) {
 		User user;
 		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;

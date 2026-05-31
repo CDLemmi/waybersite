@@ -31,6 +31,7 @@ DB_RESULT db_get_user(Database db, int in_id, char* out_name, char* out_hash, in
 
 DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count);
 		
+DB_RESULT db_delete_user(Database db, int id);
 
 void db_create_session(Database db, char* session_id, int user_id);
 

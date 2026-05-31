@@ -93,6 +93,20 @@ DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count) {
 }
 
 
+DB_RESULT db_delete_user(Database db, int id) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "DELETE FROM users WHERE id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	int result = sqlite3_step(s);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}	
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+
+
 Database init_database() {
 	Database db;
 	int rc = sqlite3_open("database.db", &(db.db));
