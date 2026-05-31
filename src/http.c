@@ -41,7 +41,6 @@ void write_http_response(HTTPResponse r, int fd) {
 		dprintf(fd, "CacheControl: no-store\r\n");
 	}
 
-	dprintf(fd, "Connection: keep-alive\r\n");
 	if(strlen(r.set_cookie) > 0) {
 		dprintf(fd, "Set-Cookie: %s\r\n", r.set_cookie);
 	}

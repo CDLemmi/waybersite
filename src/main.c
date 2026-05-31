@@ -17,6 +17,8 @@
 
 
 
+
+
 //error = 0 -> false
 char* handle_api_request(cJSON* request_body, char* api_endpoint, int user_id, int* error, Database db) {
 	if(!strcmp(api_endpoint, "account_page")) {
@@ -146,30 +148,21 @@ void handle_connection(int client_fd, Database db) {
 
 
 
-	while(1) {
-		char buffer[BUFFER_SIZE] = {0};
+	char buffer[BUFFER_SIZE] = {0};
 	
-		read(client_fd, buffer, BUFFER_SIZE - 1);
-
-		if(strlen(buffer) == 0) continue;
+	read(client_fd, buffer, BUFFER_SIZE - 1);
+	if(strlen(buffer) != 0) {
 		printf("Request:\n%s\n", buffer);
-
 		HTTPRequest request = parse_http_request(buffer);
 		printf("method=%d;path=%s;host=%s;session=%s;connection=%d\n\n", request.request_method, request.path, request.host, request.session_cookie, request.connection_keep_alive);
-
 		//if(strcmp(r.host, "www.waybersite.de")) break;
-		
+	
 		HTTPResponse response = handle_request(request, db);
-
 		write_http_response(response, client_fd);
-
 		free_http_response(response);
 		free_http_request(request);
-
-		if(1 || !request.connection_keep_alive) {
-			break;
-		}
 	}
+	
 	close(client_fd);
 }
 
