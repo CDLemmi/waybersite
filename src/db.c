@@ -7,8 +7,90 @@
 #include <time.h>
 
 
-#define HASH_SIZE crypto_pwhash_STRBYTES
 
+
+
+DB_RESULT db_create_user(Database db, char* name, char* hash, int admin, int* out_id) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "INSERT INTO users (name, hash, admin) VALUES (?, ?, ?) RETURNING id;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
+	sqlite3_bind_blob(s, 2, hash, HASH_SIZE, SQLITE_STATIC);
+	sqlite3_bind_int(s, 3, admin);
+	int result = sqlite3_step(s);
+	if(result != SQLITE_ROW) {
+		return DB_ERROR;
+	}
+	if(out_id != NULL) *out_id = sqlite3_column_int(s, 0);
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+DB_RESULT db_set_user(Database db, int id, char* name, char* hash, int admin) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "UPDATE users SET name = ?, hash = ?, admin = ? WHERE id = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
+	sqlite3_bind_blob(s, 2, hash, HASH_SIZE, SQLITE_STATIC);
+	sqlite3_bind_int(s, 3, admin);
+	sqlite3_bind_int(s, 4, id);
+	int result = sqlite3_step(s);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+DB_RESULT db_get_user_from_name(Database db, char* in_name, int* out_id, char* out_hash, int* out_admin) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT id, hash, admin FROM users WHERE name = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, in_name, -1, SQLITE_STATIC);
+	int result = sqlite3_step(s);
+	if(result == SQLITE_DONE) {
+		return DB_NO_RESULT;
+	} else if(result != SQLITE_ROW) {
+		return DB_ERROR;
+	}
+	*out_id = sqlite3_column_int(s, 0);
+	*out_admin = sqlite3_column_int(s, 2);
+	char* hash = sqlite3_column_text(s, 1);
+	memcpy(out_hash, hash, HASH_SIZE);
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+DB_RESULT db_get_user(Database db, int in_id, char* out_name, char* out_hash, int* out_admin) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT name, hash, admin FROM users WHERE id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, in_id);
+	int result = sqlite3_step(s);
+	if(result == SQLITE_DONE) {
+		return DB_NO_RESULT;
+	} else if(result != SQLITE_ROW) {
+		return DB_ERROR;
+	}
+	*out_admin = sqlite3_column_int(s, 2);
+	char* hash = sqlite3_column_text(s, 1);
+	memcpy(out_hash, hash, HASH_SIZE);
+	char* name = sqlite3_column_text(s, 0);
+	strcpy(out_name, name);
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+
+DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT id FROM users;", -1, &s, NULL);
+	int i;
+	for(i = 0; i < 256; i++) {
+		int result = sqlite3_step(s);
+		if(result == SQLITE_DONE) break;
+		if(result != SQLITE_ROW) return DB_ERROR;
+		id_list[i] = sqlite3_column_int(s, 0);
+	}
+	*id_count = i;
+	return DB_DONE;
+}
 
 
 Database init_database() {
@@ -23,7 +105,8 @@ Database init_database() {
 		"CREATE TABLE IF NOT EXISTS users ("
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"name TEXT NOT NULL UNIQUE,"
-		"hash BLOB NOT NULL"
+		"hash BLOB NOT NULL,"
+		"admin INTEGER"
 		");";
 	
 	char* err_msg = NULL;
@@ -58,34 +141,6 @@ Database init_database() {
 }
 
 
-int db_set_username(Database db, int id, char* name) {
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "UPDATE users SET name = ? WHERE id = ?;", -1, &s, NULL);
-	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
-	sqlite3_bind_int(s, 2, id);
-	if(sqlite3_step(s) != SQLITE_DONE) {
-		return 1;
-	}
-	sqlite3_finalize(s);
-	return 0;
-}
-
-
-
-
-char* db_get_username(Database db, int id) {
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT name FROM users WHERE id = ?", -1, &s, NULL);
-	sqlite3_bind_int(s, 1, id);
-	if(sqlite3_step(s) != SQLITE_ROW) {
-		return NULL;
-	}
-	char* output = sqlite3_column_text(s, 0);
-	char* name = calloc(strlen(output) + 1, 1);
-	strcpy(name, output);
-	sqlite3_finalize(s);
-	return name;
-}
 
 void db_create_session(Database db, char* session_id, int user_id) {
 	int current_time = time(NULL);
@@ -119,55 +174,9 @@ int db_verify_user_session(Database db, char* session_id) {
 	return sqlite3_column_int(s, 0);
 }
 
-char* db_get_hash(Database db, int id) {
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT hash FROM users WHERE id = ?", -1, &s, NULL);
-	sqlite3_bind_int(s, 1, id);
-	if(sqlite3_step(s) != SQLITE_ROW) {
-		return NULL;
-	}
-	char* output = sqlite3_column_blob(s, 0);
-	char* hash = malloc(HASH_SIZE);
-	memcpy(hash, output, HASH_SIZE);
-	sqlite3_finalize(s);
-	return hash;
-}
-
-
-char* db_get_user_hash_and_id(Database db, char* name, int* user_id) {
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT id, hash FROM users WHERE name = ?", -1, &s, NULL);
-	sqlite3_bind_text(s, 1, name, -1, SQLITE_STATIC);
-	if(sqlite3_step(s) != SQLITE_ROW) {
-		*user_id = -1;
-		return NULL;
-	}
-	*user_id = sqlite3_column_int(s, 0);
-	char* output = sqlite3_column_blob(s, 1);
-	char* hash = malloc(HASH_SIZE);
-	memcpy(hash, output, HASH_SIZE);
-	sqlite3_finalize(s);
-	return hash;
-}
 
 
 
-//0 = success
-//1 = username already taken
-//2 = hash failed
-int db_set_user(Database db, int id, char* name, char* hash) {
-	
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "INSERT INTO users (id, name, hash) VALUES (?, ?, ?)"
-		"ON CONFLICT(id) DO UPDATE SET name=excluded.name, hash=excluded.hash;", -1, &s, NULL); 
-	sqlite3_bind_int(s, 1, id);
-	sqlite3_bind_text(s, 2, name, -1, SQLITE_STATIC);
-	sqlite3_bind_blob(s, 3, hash, HASH_SIZE, SQLITE_STATIC);
-	if(sqlite3_step(s) != SQLITE_DONE) return 1;
-	sqlite3_finalize(s);
-
-	return 0;
-}
 
 
 

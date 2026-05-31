@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 
-#define HASH_SIZE crypto_pwhash_STRBYTES
+#define HASH_SIZE 128
 
 
 char* create_session_id() {
@@ -33,16 +33,17 @@ char* create_session_id() {
 //1 = wrong
 int change_password(char* name, char* pw_old, char* pw_new, Database db) {
 	int user_id = 0;
-	char* db_hash = db_get_user_hash_and_id(db, name, &user_id);
-	if(db_hash == NULL) return 1;
-	if(crypto_pwhash_str_verify(db_hash, pw_old, strlen(pw_old))) return 1;
-	
+	User user;
+	if(user_get_from_name(&user, name, db)) {
+		return 1;
+	}
+	if(crypto_pwhash_str_verify(user.hash, pw_old, strlen(pw_old))) return 1;
 	
 	char hash[HASH_SIZE];
 	hash_password(hash, pw_new);
 
-
-	db_set_user(db, user_id, name, hash);
+	memcpy(user.hash, hash, HASH_SIZE);
+	user_save(user, db);
 
 	return 0;
 }
@@ -61,31 +62,59 @@ void hash_password(char* hash, char* password) {
 
 
 
+int user_save(User user, Database db) {
+	if(db_set_user(db, user.id, user.name, user.hash, user.admin) == DB_DONE) {
+		return 0;
+	}
+	return 1;
+}
 
-void create_user(int id, char* name, char* password, Database db) {
+
+int user_create(char* name, char* password, int* out_id,  Database db) {
 	char hash[HASH_SIZE];
 	hash_password(hash, password);
 
-	db_set_user(db, id, name, hash);
+	if(db_create_user(db, name, hash, 0, out_id) != DB_DONE) {
+		return 1;
+	}
+	return 0;
+}
 
+
+
+DB_RESULT db_get_user_from_name(Database db, char* in_name, int* out_id, char* out_hash, int* out_admin);
+
+DB_RESULT db_get_user(Database db, int in_id, char* out_name, char* out_hash, int* out_admin);
+
+
+
+
+
+
+int user_get_from_name(User* user, char* name, Database db) {
+	if(db_get_user_from_name(db, name, &(user->id), (user->hash), &user->admin) != DB_DONE) return 1;
+	return 0;
+}
+
+int user_get(User* user, int id, Database db) {
+	if(db_get_user(db, id, (user->name), (user->hash), &user->admin) != DB_DONE) return 1;
+	user->id = id;
+	return 0;
 }
 
 
 
 
-
 char* handle_user_login(char* name, char* password, Database db) {
-	int user_id = 0;
-	char* db_hash = db_get_user_hash_and_id(db, name, &user_id);
-	if(db_hash == NULL) return NULL;
+	User user;
+	if(user_get_from_name(&user, name, db)) return NULL;
 	
-	if(crypto_pwhash_str_verify(db_hash, password, strlen(password))) return NULL;
+	if(crypto_pwhash_str_verify(user.hash, password, strlen(password))) return NULL;
 
 	char* session_id = create_session_id();
 
-	db_create_session(db, session_id, user_id);
+	db_create_session(db, session_id, user.id);
 
-	free(db_hash);
 	return session_id;
 	
 }

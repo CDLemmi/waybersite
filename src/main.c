@@ -20,22 +20,69 @@
 
 
 //error = 0 -> false
-char* handle_api_request(cJSON* request_body, char* api_endpoint, int user_id, int* error, Database db) {
+char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int* error, Database db) {
 	if(!strcmp(api_endpoint, "account_page")) {
-		char* name = db_get_username(db, user_id);
 		cJSON* json = cJSON_CreateObject();
-		cJSON_AddItemToObject(json, "username", cJSON_CreateString(name));
-		free(name);
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		char* json_response = cJSON_Print(json);
 		cJSON_Delete(json);
 		return json_response;
-	}
-	else if(!strcmp(api_endpoint, "username-change")) {
+	} else if(!strcmp(api_endpoint, "username-change")) {
 		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
-		*error = db_set_username(db, user_id, name);
-	}
-	else
-	{
+		memset(user.name, 0, sizeof(user.name));
+		strcpy(user.name, name);
+		*error = user_save(user, db);
+	} else if(!strcmp(api_endpoint, "dashboard-page")) {
+		int ids[256];
+		int id_count;
+		db_get_user_list(db, ids, &id_count);
+		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON* user_list = cJSON_CreateArray();
+		for(int i = 0; i < id_count; i++) {
+			cJSON* user_json = cJSON_CreateObject();
+			User user;
+			user_get(&user, ids[i], db);
+			cJSON_AddItemToObject(user_json, "id", cJSON_CreateNumber(user.id));
+			cJSON_AddItemToObject(user_json, "username", cJSON_CreateString(user.name));
+			cJSON_AddItemToObject(user_json, "admin", cJSON_CreateNumber(user.admin));
+			cJSON_AddItemToArray(user_list, user_json);
+		}
+		cJSON_AddItemToObject(json, "user_list", user_list);
+		char* json_response = cJSON_Print(json);
+		cJSON_Delete(json);
+		return json_response;
+	} else if(!strcmp(api_endpoint, "user-add")) {
+		User user;
+		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
+		char* password = cJSON_GetObjectItem(request_body, "password")->valuestring;
+		int i;
+		user_create(name, password, &i, db);
+	} else if(!strcmp(api_endpoint, "user-remove")) {
+	} else if(!strcmp(api_endpoint, "user-set-name")) {
+		User user;
+		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
+		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
+		user_get(&user, id, db);
+		strcpy(user.name, name);
+		user_save(user, db);
+	} else if(!strcmp(api_endpoint, "user-set-password")) {
+		User user;
+		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
+		char* pw = cJSON_GetObjectItem(request_body, "password_new")->valuestring;
+		char hash[HASH_SIZE];
+		hash_password(hash, pw);
+		user_get(&user, id, db);
+		memcpy(user.hash, hash, HASH_SIZE);
+		user_save(user, db);
+	} else if(!strcmp(api_endpoint, "user-set-admin")) {
+		User user;
+		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
+		int admin = cJSON_GetObjectItem(request_body, "admin")->valueint;
+		user_get(&user, id, db);
+		user.admin = admin;
+		user_save(user, db);
+	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);
 		strcpy(errMes, "{\"errorMes\": \"Unused API endpoint\"}");
@@ -90,7 +137,9 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			cJSON* json = cJSON_ParseWithLength(request.content, request.content_length);
 			cJSON* body = cJSON_GetObjectItem(json, "body");
 
-			char* json_response = handle_api_request(body, request.path + 5, user_id, &error, db);
+			User user;
+			user_get(&user, user_id, db);
+			char* json_response = handle_api_request(body, request.path + 5, user, &error, db);
 			cJSON_Delete(body);
 			if(error) {
 				response.status_code = 400;
@@ -174,7 +223,7 @@ int main() {
 
 	Database db = init_database();
 	
-	create_user(0, "root", "test", db);
+	user_create( "root", "test", 0, db);
 
 	int server_fd, client_fd;
 	struct sockaddr_in addr;
