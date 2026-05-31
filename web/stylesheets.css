@@ -1,3 +1,67 @@
+table, th, td
+{
+    border: 1px solid white;
+    padding: 10px 10px 10px 10px
+}
+
+table{
+    border-collapse: collapse;
+}
+
+.font_bold
+{
+    font-weight: bold;
+}
+
+.font_large
+{
+    font-size: 26px;
+}
+
+.font_medium
+{
+    font-size: 20px;
+}
+
+.font_small
+{
+    font-size: 16px;
+}
+
+.default_button
+{
+    font-size: 16px;
+    padding: 2px 50px;
+}
+
+.default_textbox
+{
+    background-color: rgb(103, 56, 103);
+    width: 300px;
+}
+
+.default_inline
+{
+    display: flex;
+    flex-direction: column;
+    margin: 15px 15px;
+    gap: 15px;
+    align-items: start;
+}
+
+.default_content
+{
+    display: flex;
+    flex-direction: column;
+    margin: 15px 15px;
+    gap: 15px;
+    align-items: start;
+}
+
+.default_content p {
+    margin: 0;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -13,6 +77,12 @@ body {
     flex-direction: column;
     margin-top: -35px;
     margin-left: 15px;
+}
+
+.header_inline
+{
+    display: flex;
+    flex-direction: row;
 }
 
 .footer
@@ -54,9 +124,10 @@ body {
     width: 90%;
 }
 
-#cookie_box
+#divCookies
 {
     position: fixed;
+    visibility: hidden;
     bottom: 100px;
     left: 15px;
     display: flex;
@@ -71,17 +142,17 @@ body {
     z-index: 999;
 }
 
-#cookie_box > * {
+#divCookies > * {
     max-width: 97%;
 }
 
-#login_button
+#btnLogin
 {
     margin: 20px 10px;
     padding: 5px 80px;
 }
 
-#under_construction
+#divUnderConstruction
 {
     display: flex;
     flex-direction: column;
@@ -91,4 +162,13 @@ body {
     margin: 0px auto;
     align-items: center;
     color: yellow
+}
+
+#tblUserHeader
+{
+    text-align: right;
+    margin-left: auto;
+    margin-right: 30px;
+    margin-top: 80px;
+    font-size: 26px
 }

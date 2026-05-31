@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="stylesheets.css">
-<script src="script.js" defer></script>
+<script src="script_global.js" defer></script>
+<script src="script_signin.js" defer></script>
 <html>
     <head>
-        <title>Wayber</title>
+        <title>Waybersite - Anmelden</title>
     </head>   
     <body>
         <div class="header">
@@ -13,18 +14,18 @@
         <div class="login_box">
             <h2>Anmelden</h2>
             <h3 class="login_content">Benutzername</h3>  
-            <input type="text" class="login_content"></h3>    
+            <input type="text" id="tbUsername" class="login_content"></h3>    
             <h3 class="login_content">Passwort</h3>  
-            <input type="text" class="login_content"></input>
-            <button id="login_button">Login</button>            
+            <input type="text" id="tbPassword" class="login_content"></input>
+            <button id="btnLogin">Login</button>            
         </div>
-        <div id="under_construction">
+        <div id="divUnderConstruction">
             <h2>Under Construction</h2>
             <h4>Diese Webseite befindet sich noch im Aufbau!</h4>
         </div>
-        <div id="cookie_box">
+        <div id="divCookies">
             <p>Diese Webseite verwendet einen Cookie, um die Login-Session zu speichern. Dieser Cookie ist für die Funktion der Seite essentiell und kann somit nicht abgewählt werden.</p>
-            <button id="cookie_button">Alles Klar</button>
+            <button onclick="acceptCookies()" id="btnAcceptCookies">Alles Klar</button>
         </div>
         <div class="footer">
             <div class="seperator"></div>
