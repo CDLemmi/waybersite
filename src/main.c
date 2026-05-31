@@ -33,6 +33,10 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		strcpy(user.name, name);
 		*error = user_save(user, db);
 	} else if(!strcmp(api_endpoint, "dashboard-page")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		int ids[256];
 		int id_count;
 		db_get_user_list(db, ids, &id_count);
@@ -53,15 +57,27 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_Delete(json);
 		return json_response;
 	} else if(!strcmp(api_endpoint, "user-add")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		User user;
 		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
 		char* password = cJSON_GetObjectItem(request_body, "password")->valuestring;
 		int i;
 		user_create(name, password, &i, db);
 	} else if(!strcmp(api_endpoint, "user-remove")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
 		db_delete_user(db, id);
 	} else if(!strcmp(api_endpoint, "user-set-name")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		User user;
 		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
 		char* name = cJSON_GetObjectItem(request_body, "username_new")->valuestring;
@@ -69,6 +85,10 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		strcpy(user.name, name);
 		user_save(user, db);
 	} else if(!strcmp(api_endpoint, "user-set-password")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		User user;
 		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
 		char* pw = cJSON_GetObjectItem(request_body, "password_new")->valuestring;
@@ -78,6 +98,10 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		memcpy(user.hash, hash, HASH_SIZE);
 		user_save(user, db);
 	} else if(!strcmp(api_endpoint, "user-set-admin")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
 		User user;
 		int id = cJSON_GetObjectItem(request_body, "user_id")->valueint;
 		int admin = cJSON_GetObjectItem(request_body, "admin")->valueint;
@@ -143,7 +167,9 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			user_get(&user, user_id, db);
 			char* json_response = handle_api_request(body, request.path + 5, user, &error, db);
 			cJSON_Delete(body);
-			if(error) {
+			if(error == 2) {
+				response.status_code = 401;
+			} else if(error) {
 				response.status_code = 400;
 			} else {
 				response.status_code = 200;
