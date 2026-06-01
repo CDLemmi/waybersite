@@ -167,7 +167,7 @@ void db_create_session(Database db, char* session_id, int user_id) {
 	sqlite3_bind_int(s, 2, user_id);
 	sqlite3_bind_int(s, 3, expires_at);
 	if(sqlite3_step(s) != SQLITE_DONE) {
-		fprintf(stderr, "cant open db: %s\n", sqlite3_errmsg(db.db));
+		fprintf(stderr, "[ERROR] (q1): %s\n", sqlite3_errmsg(db.db));
 		exit(1);
 	}
 	sqlite3_finalize(s);

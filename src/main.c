@@ -154,6 +154,9 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			response.status_code = 200;
 		}
 		cJSON_Delete(json);
+	} else if(!strcmp(request.path, "/")) {
+		response.status_code = 303;
+		strcpy(response.location, "/home.html");
 	} else if(!strncmp(request.path, "/api/", 5)) {
 		int user_id = db_verify_user_session(db, request.session_cookie);
 		if(user_id < 0) {
@@ -165,6 +168,7 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 
 			User user;
 			user_get(&user, user_id, db);
+			printf("[INFO] verified user %s(id=%d)\n", user.name, user_id);
 			char* json_response = handle_api_request(body, request.path + 5, user, &error, db);
 			cJSON_Delete(body);
 			if(error == 2) {
@@ -202,6 +206,7 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			ext_not_supported = 1;
 		}
 		if(strstr(request.path, "..") != NULL || access(path, R_OK) || ext_not_supported) {
+			printf("[INFO] refusing file path: %s\n", path); 
 			response.status_code = 404;
 			memset(response.content_type, 0, sizeof(response.content_type));
 			strcpy(response.content_type, "text/html");
@@ -229,17 +234,23 @@ void handle_connection(int client_fd, Database db) {
 	
 	read(client_fd, buffer, BUFFER_SIZE - 1);
 	if(strlen(buffer) != 0) {
-		printf("Request:\n%s\n", buffer);
 		HTTPRequest request = parse_http_request(buffer);
-		printf("method=%d;path=%s;host=%s;session=%s;connection=%d\n\n", request.request_method, request.path, request.host, request.session_cookie, request.connection_keep_alive);
-		//if(strcmp(r.host, "www.waybersite.de")) break;
+		char method[16];
+		if(request.request_method == GET) {
+			strcpy(method, "GET");
+		} else if(request.request_method == POST) {
+			strcpy(method, "POST");
+		} else {
+			strcpy(method, "UNKNOWN");
+		}
+		printf("Request: %s %s\n", method, request.path);
 	
 		HTTPResponse response = handle_request(request, db);
+		printf("Response: %d\n", response.status_code);
 		write_http_response(response, client_fd);
 		free_http_response(response);
 		free_http_request(request);
 	}
-	
 	close(client_fd);
 }
 

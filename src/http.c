@@ -35,11 +35,17 @@ void write_http_response(HTTPResponse r, int fd) {
 		dprintf(fd, "401 Unauthorized\r\n");
 	} else if(r.status_code == 400) {
 		dprintf(fd, "400 Bad Request\r\n");
+	} else if(r.status_code == 303) {
+		dprintf(fd, "303 See Other\r\n");
 	}
 	if(r.content_length > 0) {
 		dprintf(fd, "Content-Type: %s\r\n", r.content_type);
 		dprintf(fd, "CacheControl: no-store\r\n");
 	}
+
+	if(strlen(r.location) > 0) {
+		dprintf(fd, "Location: %s\r\n", r.location);
+	};
 
 	if(strlen(r.set_cookie) > 0) {
 		dprintf(fd, "Set-Cookie: %s\r\n", r.set_cookie);
@@ -53,7 +59,7 @@ void write_http_response(HTTPResponse r, int fd) {
 
 
 HTTPRequest parse_http_request(char* s) {
-	HTTPRequest r;
+	HTTPRequest r = {0};
 
 	char method_s[16] = {0};
 	int method_end = strchr(s, ' ') - s;

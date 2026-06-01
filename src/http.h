@@ -6,6 +6,7 @@
 typedef struct {
 	int status_code;
 	char content_type[1024];
+	char location[1024];
 	long content_length;
 	char set_cookie[1024];
 	char* content;
