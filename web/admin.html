@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="stylesheets.css">
 <script src="script_global.js" defer></script>
-<script src="script_account.js" defer></script>
+<script src="script_admin.js" defer></script>
 <html>
     <head>
-        <title>Waybersite - Account</title>
+        <title>Waybersite - Admin-Dashboard</title>
     </head>   
     <body>
         <div class="header">
@@ -16,24 +16,26 @@
             <div class="seperator"></div>
         </div>
         <div class="default_content">
-            <p class="font_large">Accountverwaltung</p>
-            <p class="font_medium font_bold">Ändere benutzerspezifische Einstellungen, wie den Benutzernamen oder das Passwort.</p>
+            <p class="font_large">Admin-Dashboard</p>
+            <p class="font_medium font_bold">Admin-spezifische Einstellungen, wie das Erstellen von neuen Benutzern.</p>
             <div class="default_inline">
-                <p class="font_small font_bold">Benutzername:</p>
+                <p class="font_small font_bold">Benutzerübersicht:</p>
                 <div class="default_inline">
-                    <p class="font_small">Neuer Benutzername:</p>
-                    <input id="tbNewUser" type="text" class="default_textbox"></input>
-                    <button id="btnSaveUser" class="default_button">Speichern</button>
+                    <table id="tabUsers" class="default_table">
+                        <th>User-Id</th>
+                        <th>Benutzername</th>
+                        <th>Passwort</th>
+                        <th>Berechtigungen</th>
+                        <th></th>
+                    </table>
                 </div>
-            <p class="font_small font_bold">Passwort:</p>
+                <p class="font_small font_bold">Neuer Benutzer:</p>
                 <div class="default_inline">
-                    <p class="font_small">Aktuelles Passwort:</p>
-                    <input id="tbPwCurrent" type="text" class="default_textbox"></input>
-                    <p class="font_small">Neues Passwort:</p>
-                    <input id="tbPwNew" type="text" class="default_textbox"></input>
-                    <p class="font_small">Neues Passwort bestätigen:</p>
-                    <input id="tbPwNewConfirm" type="text" class="default_textbox"></input>
-                    <button id="btnSavePw" class="default_button">Speichern</button>
+                    <p id="tbAddUserName" class="font_small">Benutzername:</p>
+                    <input id="tbAddUserName" class="default_textbox" type="text"></input>
+                    <p id="tbAddUserName" class="font_small">Passwort:</p>
+                    <input id="tbAddUserPw" class="default_textbox" type="text"></input>
+                    <button id="btnAddUser" class="default_button">Erstellen</button>
                 </div>
             </div>
         </div>

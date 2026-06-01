@@ -26,7 +26,7 @@ async function btnLogin_Click()
     }
     else if(response.status === 200)
     {
-        window.location.assign("/account.html");
+        window.location.assign("/home.html");
     }
     else
     {
