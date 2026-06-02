@@ -217,6 +217,7 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			int content_size = fread(content, sizeof(char), 16384, file);
 			http_response_set_content(&response, content, content_size);
 			response.status_code = 200;
+			fclose(file);
 		}
 		
 
@@ -276,6 +277,7 @@ int main() {
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(PORT);
 	bind(server_fd, (struct sockaddr*)&addr, sizeof(addr));
+	printf("bind addr = %s\n", inet_ntoa(addr.sin_addr));
 
 	listen(server_fd, 10);
 	printf("Listening on port %d\n", PORT);
