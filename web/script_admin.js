@@ -24,7 +24,7 @@ async function onLoad()
         //Display user list
         const users = data.user_list;
         users.forEach(element => {
-            addUserToTable(element.id, element.username, element.admin)
+            addUserToTable(element.id, element.username, element.admin);
         });
     }
 }
