@@ -200,11 +200,14 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			strcpy(response.content_type, "text/css");
 		} else if(!strcmp(ext, "js")) {
 			strcpy(response.content_type, "application/javasript");
-		} else if(!strcmp(ext, ".jpg")) {
+		} else if(!strcmp(ext, "jpg")) {
 			strcpy(response.content_type, "image/jpeg");
+		} else if(!strcmp(ext, "json")) {
+			strcpy(response.content_type, "application/json");
 		} else {
 			ext_not_supported = 1;
 		}
+
 		if(strstr(request.path, "..") != NULL || access(path, R_OK) || ext_not_supported) {
 			printf("[INFO] refusing file path: %s\n", path); 
 			response.status_code = 404;
@@ -277,7 +280,6 @@ int main() {
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(PORT);
 	bind(server_fd, (struct sockaddr*)&addr, sizeof(addr));
-	printf("bind addr = %s\n", inet_ntoa(addr.sin_addr));
 
 	listen(server_fd, 10);
 	printf("Listening on port %d\n", PORT);
