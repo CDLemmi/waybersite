@@ -1,3 +1,7 @@
+.js_newline {
+    white-space: pre-line;
+}
+
 a {
     color: rgb(207, 207, 207);
     font-weight: bold;
