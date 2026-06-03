@@ -44,6 +44,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		db_get_user_list(db, ids, &id_count);
 		cJSON* json = cJSON_CreateObject();
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON* user_list = cJSON_CreateArray();
 		for(int i = 0; i < id_count; i++) {
 			cJSON* user_json = cJSON_CreateObject();
@@ -112,6 +113,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		user_save(user, db);
 	} else if(!strcmp(api_endpoint, "match-page")) {
 		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
 		char* s = cJSON_Print(json);
 		return s;
