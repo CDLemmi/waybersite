@@ -115,6 +115,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
 		char* s = cJSON_Print(json);
 		return s;
+	//} else if(!strcmp(api_endpoint, "place-bet")) {
+	//	int match_id = 
 	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);

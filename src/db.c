@@ -29,8 +29,8 @@ DB_RESULT db_create_config_tables(Database db) {
 	char* s2 = 
 		"CREATE TABLE matches ("
 		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-		"'group' TEXT NOT NULL,"
-		"'datetime' TEXT NOT NULL,"
+		"`group` TEXT NOT NULL,"
+		"`datetime` TEXT NOT NULL,"
 		"team1 TEXT NOT NULL,"
 		"team2 TEXT NOT NULL"
 		");";
@@ -46,7 +46,7 @@ DB_RESULT db_create_config_tables(Database db) {
 
 DB_RESULT db_create_match(Database db, char* group, char* datetime, char* team1, char* team2) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "INSERT INTO matches ('group', 'datetime', team1, team2) VALUES (?, ?, ?, ?);", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "INSERT INTO matches (`group`, `datetime`, team1, team2) VALUES (?, ?, ?, ?);", -1, &s, NULL);
 	sqlite3_bind_text(s, 1, group, -1, SQLITE_STATIC);
 	sqlite3_bind_text(s, 2, datetime, -1, SQLITE_STATIC);
 	sqlite3_bind_text(s, 3, team1, -1, SQLITE_STATIC);
@@ -111,7 +111,7 @@ DB_RESULT db_get_match_ids(Database db, int* ids, int* id_count) {
 
 DB_RESULT db_get_match(Database db, int id, char* out_time, char* out_team1, char* out_team2) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT 'datetime', team1, team2 FROM matches WHERE id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT `datetime`, team1, team2 FROM matches WHERE id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		char* time = sqlite3_column_text(s, 0);
