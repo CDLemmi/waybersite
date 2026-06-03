@@ -11,6 +11,7 @@
 #include "http.h"
 #include "db.h"
 #include "users.h"
+#include "game.h"
 
 #define PORT 8080
 #define BUFFER_SIZE 4096
@@ -24,6 +25,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 	if(!strcmp(api_endpoint, "account_page")) {
 		cJSON* json = cJSON_CreateObject();
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
 		char* json_response = cJSON_Print(json);
 		cJSON_Delete(json);
 		return json_response;
@@ -108,6 +110,11 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		user_get(&user, id, db);
 		user.admin = admin;
 		user_save(user, db);
+	} else if(!strcmp(api_endpoint, "match-page")) {
+		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
+		char* s = cJSON_Print(json);
+		return s;
 	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);
@@ -263,6 +270,8 @@ int main() {
 	Database db = init_database();
 	
 	user_create( "root", "test", 0, db);
+
+	init_game(db);
 
 	int server_fd, client_fd;
 	struct sockaddr_in addr;

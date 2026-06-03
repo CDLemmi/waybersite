@@ -17,8 +17,27 @@ typedef struct {
 
 typedef enum {DB_DONE = 0, DB_ERROR = 1, DB_NO_RESULT = 2} DB_RESULT;
 
-
 Database init_database();
+
+
+
+//game tables
+
+DB_RESULT db_create_config_tables(Database db);
+
+DB_RESULT db_create_match(Database db, char* group, char* datetime, char* team1, char* team2);
+
+DB_RESULT db_create_game_tables(Database db);
+
+DB_RESULT db_get_match_ids(Database db, int* ids, int* id_count);
+
+DB_RESULT db_get_match(Database db, int id, char* time, char* team1, char* team2);
+
+DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pred2);
+
+DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2);
+
+//
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);
 
