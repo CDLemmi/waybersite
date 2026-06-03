@@ -8,10 +8,9 @@ onLoad();
 
 async function onLoad()
 {
-    /*const response = await fetch("/api/match-page");
+    const response = await fetch("/api/match-page");
     if(response.status === 401)
     {
-        alert("Interner Serverfehler.")
         window.location.replace("/signin.html")
     }
     else if(response.status === 400)
@@ -20,21 +19,13 @@ async function onLoad()
     }
     else if(response.status === 200)
     {
-        const matches = response.json().matches;
+        const data = await response.json();
+        console.log(data);
 
-        matches.forEach(e => {
+        data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
         });
-    }*/
-
-    addMatch(0, "A", "2026-06-02 14:30:00", "Belgien", "Schweden", -1, -1, -1, -1);
-    addMatch(0, "A", "2026-06-02 14:30:00", "Marokko", "Ägypten", 2, 3, 10, 1);
-    addMatch(0, "A", "2026-06-02 14:30:00", "DR Kongo", "Deutschland", 2, 3, 10, 1);
-
-    addMatch(0, "A", "2026-06-04 12:00:00", "Bosnien Herzegowina", "Kap Verde", 4, 8, 2, 3);
-    addMatch(0, "A", "2026-06-04 14:30:00", "Portugal", "Niederlande", 2, 3, 10, 1);
-
-    addMatch(0, "A", "2026-06-08 16:30:00", "Frankreich", "Ghana", 0, 0, 1, 4);
+    };
 }
 
 function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score2)
