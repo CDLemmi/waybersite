@@ -203,3 +203,8 @@ body {
     margin-right: 30px;
     font-size: 26px
 }
+
+#tblLinkAdmin
+{
+    visibility: hidden;
+}

@@ -1,6 +1,7 @@
 let divMatches = document.getElementById("divMatches");
 let tplMatch = document.getElementById("tplMatch");
 let tblUserHeader = document.getElementById("tblUserHeader");
+let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 let days = [];
 
@@ -20,7 +21,9 @@ async function onLoad()
     else if(response.status === 200)
     {
         const data = await response.json();
-        console.log(data);
+       
+        tblUserHeader.textContent = data.username;
+        if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
 
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
