@@ -1,5 +1,6 @@
 let divMatches = document.getElementById("divMatches");
 let tplMatch = document.getElementById("tplMatch");
+let tblUserHeader = document.getElementById("tblUserHeader");
 
 let days = [];
 
@@ -41,7 +42,6 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     const dateTimeObj = new Date(dateTime);
     const time = `${String(dateTimeObj.getHours()).padStart(2, "0")}:${String(dateTimeObj.getMinutes()).padStart(2, "0")} Uhr`;
     const day = `${String(dateTimeObj.getDate()).padStart(2, "0")}.${String(dateTimeObj.getMonth() + 1).padStart(2, "0")}.${dateTimeObj.getFullYear()}`;
-        console.log(dateTimeObj.getDate());
 
     if(!days.includes(day))
     {

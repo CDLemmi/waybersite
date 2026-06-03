@@ -59,7 +59,7 @@ function addUserToTable(id, name, isAdmin)
 
         //Password
         const tbResetPw = document.createElement("input");
-        tbResetPw.type = "text";
+        tbResetPw.type = "password";
         tbResetPw.style.color="white";
         tbResetPw.style.backgroundColor="rgb(103, 56, 103)";
         tbResetPw.id = `tbResetPw_${id}`;
