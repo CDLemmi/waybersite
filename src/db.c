@@ -10,6 +10,149 @@
 
 
 
+//****** game tables ******
+
+DB_RESULT db_create_config_tables(Database db) {
+	
+	char* err_msg = NULL;
+	int rc;
+
+	char* s1 = "DROP TABLE IF EXISTS matches;";
+	rc = sqlite3_exec(db.db, s1, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q2): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+
+	char* s2 = 
+		"CREATE TABLE matches ("
+		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+		"'group' TEXT NOT NULL,"
+		"'datetime' TEXT NOT NULL,"
+		"team1 TEXT NOT NULL,"
+		"team2 TEXT NOT NULL"
+		");";
+	rc = sqlite3_exec(db.db, s2, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q3): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+	return DB_DONE;
+}
+
+DB_RESULT db_create_match(Database db, char* group, char* datetime, char* team1, char* team2) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "INSERT INTO matches ('group', 'datetime', team1, team2) VALUES (?, ?, ?, ?);", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, group, -1, SQLITE_STATIC);
+	sqlite3_bind_text(s, 2, datetime, -1, SQLITE_STATIC);
+	sqlite3_bind_text(s, 3, team1, -1, SQLITE_STATIC);
+	sqlite3_bind_text(s, 4, team2, -1, SQLITE_STATIC);
+	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+DB_RESULT db_create_game_tables(Database db) {
+	char* s1 = 
+		"CREATE TABLE IF NOT EXISTS bets ("
+		"user_id INTEGER,"
+		"match_id INTEGER,"
+		"prediction1 INTEGER,"
+		"prediction2 INTEGER"
+		");";
+	
+	char* err_msg = NULL;
+
+	int rc = sqlite3_exec(db.db, s1, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q4): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+	
+	char* s2 = 
+		"CREATE TABLE IF NOT EXISTS played_matches ("
+		"match_id INTEGER PRIMARY KEY,"
+		"score1 INTEGER,"
+		"score2 INTEGER"
+		");";
+	
+
+	rc = sqlite3_exec(db.db, s2, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q5): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+	return DB_DONE;
+}
+
+DB_RESULT db_get_match_ids(Database db, int* ids, int* id_count) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT id FROM matches;", -1, &s, NULL);
+	int i;
+	for(i = 0; 1; i++) {
+		int result = sqlite3_step(s);
+		if(result == SQLITE_ROW) {
+			ids[i] = sqlite3_column_int(s, 0);
+		} else if(result == SQLITE_DONE) {
+			*id_count = i;
+			return DB_DONE;
+		} else {
+			return DB_ERROR;
+		}
+	}
+	return DB_ERROR;
+}
+
+DB_RESULT db_get_match(Database db, int id, char* out_time, char* out_team1, char* out_team2) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT 'datetime', team1, team2 FROM matches WHERE id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	if(sqlite3_step(s) == SQLITE_ROW) {
+		char* time = sqlite3_column_text(s, 0);
+		char* team1= sqlite3_column_text(s, 1);
+		char* team2 = sqlite3_column_text(s, 2);
+		strcpy(out_time, time);
+		strcpy(out_team1, team1);
+		strcpy(out_team2, team2);
+		return DB_DONE;
+	}
+	return DB_ERROR;
+}
+
+DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pred2) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT prediction1, prediction2 FROM bets WHERE match_id = ?, user_id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, match_id);
+	sqlite3_bind_int(s, 2, user_id);
+	if(sqlite3_step(s) == SQLITE_ROW) {
+		*pred1 = sqlite3_column_int(s, 0);
+		*pred2 = sqlite3_column_int(s, 1);
+		return DB_DONE;
+	}
+	return DB_NO_RESULT;
+}
+
+DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FORM matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, match_id);
+	if(sqlite3_step(s) == SQLITE_ROW) {
+		*score1 = sqlite3_column_int(s, 0);
+		*score2 = sqlite3_column_int(s, 1);
+		return DB_DONE;
+	}
+	return DB_NO_RESULT;
+}
+
+
+//****** user tables ******
+
 DB_RESULT db_create_user(Database db, char* name, char* hash, int admin, int* out_id) {
 	sqlite3_stmt* s;
 	sqlite3_prepare_v2(db.db, "INSERT INTO users (name, hash, admin) VALUES (?, ?, ?) RETURNING id;", -1, &s, NULL);
