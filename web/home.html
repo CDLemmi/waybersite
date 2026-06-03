@@ -7,6 +7,29 @@
         <title>Waybersite - Home</title>
     </head>   
     <body>
+        <template id="tplMatch">
+            <div class="box default_content" style="width: 900px; height: 150px;">
+                <div class="default_inline_row">
+                    <p id="tblTime" class="font_large">{time}</p>
+                    <p id="tblScore1" class="font_large font_bold" style="margin-left: 60px; color: aqua"></p>
+                    <img id="imgTeam1" width=50px style="margin-left: 20px;"></img>
+                    <p id="tblMatch" class="font_large"></p>
+                    <img id="imgTeam2" width=50px"></img>
+                    <p id="tblScore2" class="font_large font_bold" style="margin-left: 20px; color: aqua"></p>
+                </div>
+                <div class="default_inline_row">
+                    <p class="font_large">Vorhersage:</p>
+                    <button id="btnPred1Up" style="margin-left: 160px; width: 30px; height: 30px; font-size: 20px;">▲</button>
+                    <button id="btnPred1Down" style="width: 30px; font-size: 20px; margin-left: -15px; height: 30px">▼</button>
+                    <p id="tblPred1" class="font_large"></p>
+                    <p class="font_large font_bold">:</p>
+                    <p id="tblPred2" class="font_large"></p>
+                    <button id="btnPred2Up" style="width: 30px; font-size: 20px; height: 30px">▲</button>
+                    <button id="btnPred2Down" style="width: 30px; font-size: 20px; height: 30px; margin-left: -15px;">▼</button>                    
+                    <button id="btnSavePred" class="default_button" style="margin-top: 5px; margin-left: 100px; visibility: hidden;">Speichern</button>
+                </div>
+            </div>
+        </template>
         <div class="header">
             <div class="header_inline">
                 <p>🐐 Waybersite</p>
@@ -14,13 +37,13 @@
                 <a class="font_large header_content" href="/admin.html">Admin-Dashboard</a>
                 <a class="font_large header_content" href="/account.html" id="tblUserHeader">{user}</a>
             </div>
-            <div class="seperator"></div>
+            <div class="seperator" style="margin-top: -25px;"></div>
         </div>
         <div class="default_content">
-            <div id="divUnderConstruction">
-            <h2>Under Construction</h2>
-            <h4>Diese Webseite befindet sich noch im Aufbau!</h4>
-        </div>
+            <p class="font_large font_bold">Matches:</p>
+            <div class="default_inline_row">
+                <div id="divMatches" class="default_inline"></div>       
+            </div>
         </div>
         <div id="divCookies">
             <p>Diese Webseite verwendet einen Cookie, um die Login-Session zu speichern. Dieser Cookie ist für die Funktion der Seite essentiell und kann somit nicht abgewählt werden.</p>
@@ -28,7 +51,6 @@
         </div>
         <div class="footer">
             <div class="seperator"></div>
-            <p>2026 by Seeloewen Software - Impressum: Soon - Datenschutzerklärung: Soon - Flag Icons by https://flagpedia.net</p>
-        </div>
+            <p> 2026 by Seeloewen Software - <a href="/impressum.html" style="text-decoration: underline;">Impressum</a> - <a href="/privacy.html" style="text-decoration: underline;">Datenschutzerklärung</a> - Flag Icons by https://flagpedia.net</p>          </div>
     </body>
 </html>

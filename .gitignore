@@ -2,3 +2,4 @@ main
 build/
 database.db
 .vscode/
+web/legal.json
