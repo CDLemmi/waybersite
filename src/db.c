@@ -190,12 +190,14 @@ DB_RESULT db_get_match(Database db, int id, char* out_time, char* out_team1, cha
 
 DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pred2) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT prediction1, prediction2 FROM bets WHERE match_id = ?, user_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT prediction1, prediction2 FROM bets WHERE match_id = ? AND user_id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	sqlite3_bind_int(s, 2, user_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*pred1 = sqlite3_column_int(s, 0);
 		*pred2 = sqlite3_column_int(s, 1);
+		printf("%d\n", *pred1);
+		printf("%d\n", *pred2);
 		return DB_DONE;
 	}
 	return DB_NO_RESULT;
@@ -203,7 +205,7 @@ DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pr
 
 DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FORM matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FROM matches WHERE match_id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*score1 = sqlite3_column_int(s, 0);
