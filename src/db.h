@@ -37,7 +37,12 @@ DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pr
 
 DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2);
 
-//
+DB_RESULT db_get_time(Database db, int match_id, char* iso);
+
+DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pred2);
+
+
+// user management
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);
 

@@ -1,7 +1,9 @@
+#define _GNU_SOURCE
 #include "game.h"
 
 
 #include <stdio.h>
+#include <time.h>
 
 
 #include "db.h"
@@ -91,13 +93,23 @@ int init_game(Database db) {
 	parse_config(db);
 
 	db_create_game_tables(db);
-
-
-
-
-
 }
 
 
 
+int is_bet_valid(int match_id, Database db) {
+	
+	char iso[128];
+	db_get_time(db, match_id, iso);
+
+
+    struct tm t = {0};
+    strptime(iso, "%Y-%m-%dT%H:%M:%S", &t);
+    t.tm_isdst = -1; // let mktime figure out DST
+    int time_match = mktime(&t);
+	
+
+	return ((int)time(NULL) < time_match);
+
+}
 

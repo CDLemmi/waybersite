@@ -118,8 +118,15 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
 		char* s = cJSON_Print(json);
 		return s;
-	//} else if(!strcmp(api_endpoint, "place-bet")) {
-	//	int match_id = 
+	} else if(!strcmp(api_endpoint, "place-bet")) {
+		int match_id = cJSON_GetObjectItem(request_body, "id")->valueint;
+		int pred1 = cJSON_GetObjectItem(request_body, "prediction1")->valueint;
+		int pred2 = cJSON_GetObjectItem(request_body, "prediction2")->valueint;
+		if(is_bet_valid(match_id, db)) {
+			db_place_bet(db, match_id, user.id, pred1, pred2);
+		} else {
+			*error = 2;
+		}
 	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);

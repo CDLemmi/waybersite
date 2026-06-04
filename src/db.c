@@ -150,6 +150,40 @@ DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2
 	return DB_NO_RESULT;
 }
 
+DB_RESULT db_get_time(Database db, int match_id, char* out_time) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT `datetime` FROM matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, match_id);
+	if(sqlite3_step(s) != SQLITE_ROW) return DB_ERROR;
+	char* time = sqlite3_column_text(s, 0);
+	strcpy(out_time, time);
+	sqlite3_finalize(s);
+
+}
+
+DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pred2) {
+	sqlite3_stmt* s1;
+	sqlite3_prepare_v2(db.db, "SELECT * FROM bets WHERE match_id = ? AND user_id = ?;", -1, &s1, NULL);
+	sqlite3_bind_int(s1, 1, match_id);
+	sqlite3_bind_int(s1, 2, user_id);
+
+	sqlite3_stmt* s2;
+	if(sqlite3_step(s1) == SQLITE_ROW) {
+		sqlite3_prepare_v2(db.db, "UPDATE bets SET prediction1 = ?, prediction2 = ? WHERE match_id = ? AND user_id = ?;", -1, &s2, NULL);
+	} else {
+		sqlite3_prepare_v2(db.db, "INSERT INTO bets (prediction1, prediction2, match_id, user_id) VALUES (?, ?, ?, ?);", -1, &s2, NULL);
+	}
+	sqlite3_bind_int(s2, 1, pred1);
+	sqlite3_bind_int(s2, 2, pred2);
+	sqlite3_bind_int(s2, 3, match_id);
+	sqlite3_bind_int(s2, 4, user_id);
+	if(sqlite3_step(s2) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s2);
+	return DB_DONE;
+
+}
+
+
 
 //****** user tables ******
 
