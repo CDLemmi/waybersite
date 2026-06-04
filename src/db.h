@@ -41,6 +41,13 @@ DB_RESULT db_get_time(Database db, int match_id, char* iso);
 
 DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pred2);
 
+DB_RESULT db_get_group(Database db, char* group, char* teams);
+
+DB_RESULT db_get_group_bet(Database db, int user_id, char* team, int* pred);
+
+DB_RESULT db_place_group_bet(Database db, int user_id, char* team, int pred);
+
+DB_RESULT db_create_team(Database db, char* group, char* team);
 
 // user management
 

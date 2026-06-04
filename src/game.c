@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 
@@ -49,6 +50,37 @@ cJSON* get_match_list(int user_id, Database db) {
 }
 
 
+cJSON* get_groups(int user_id, Database db) {
+	cJSON* json = cJSON_CreateArray();
+	
+	char group[2];
+	for(int i = 0; i < 12; i++) {
+		group[0] = 'A' + i;
+
+		char teams[800] = {0};
+		db_get_group(db, group, teams);
+
+		cJSON* group_json = cJSON_CreateObject();
+		cJSON_AddStringToObject(group_json, "group", group);
+		
+		cJSON* teams_json = cJSON_CreateArray();
+		char* team = teams;
+		for(int j = 0; j < 4; j++) {
+			cJSON* team_json = cJSON_CreateObject();
+			cJSON_AddStringToObject(team_json, "team", team);
+			int pred = -1; 
+			db_get_group_bet(db, user_id, team, &pred);
+			cJSON_AddNumberToObject(team_json, "prediction", pred);
+			cJSON_AddItemToArray(teams_json, team_json);
+			team = team + strlen(team) + 1;
+		}
+		cJSON_AddItemToObject(group_json, "teams", teams_json);
+		cJSON_AddItemToArray(json, group_json);
+	}
+	
+	return json;
+}
+
 
 int parse_config(Database db) {
 	if(db_create_config_tables(db) != DB_DONE) {
@@ -64,7 +96,7 @@ int parse_config(Database db) {
 	long fsize = ftell(file);
 	fseek(file, 0, SEEK_SET);  /* same as rewind(f); */
 
-	char *content = malloc(fsize + 1);
+	char* content = malloc(fsize + 1);
 	fread(content, fsize, 1, file);
 	fclose(file);
 
@@ -83,6 +115,39 @@ int parse_config(Database db) {
 	}
 
 	free(content);
+	cJSON_Delete(json);
+
+	file = fopen("config/groups.json", "r");
+
+	
+	fseek(file, 0, SEEK_END);
+
+	fsize = ftell(file);
+	fseek(file, 0, SEEK_SET);  /* same as rewind(f); */
+
+	content = (char*)malloc(fsize + 1);
+	fread(content, fsize, 1, file);
+	fclose(file);
+
+	content[fsize] = 0;
+
+
+	json = cJSON_Parse(content);
+	cJSON* group_json;
+	cJSON* groups_json = cJSON_GetObjectItem(json, "groups");
+	cJSON_ArrayForEach(group_json, groups_json) {
+		char* group = cJSON_GetObjectItem(group_json, "name")->valuestring;
+		cJSON* teams_json = cJSON_GetObjectItem(group_json, "teams");
+		cJSON* team_json;
+		cJSON_ArrayForEach(team_json, teams_json) {
+			db_create_team(db, group, team_json->valuestring);
+		}
+	}
+
+	free(content);
+	cJSON_Delete(json);
+
+
 	return 0;
 }
 

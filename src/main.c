@@ -127,6 +127,17 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		} else {
 			*error = 2;
 		}
+	} else if(!strcmp(api_endpoint, "group-page")) {
+		cJSON* groups = get_groups(user.id, db);
+		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "groups", groups);
+		char* s = cJSON_Print(json);
+		cJSON_Delete(json);
+		return s;
+	} else if(!strcmp(api_endpoint, "place-group-bet")) {
+		char* team = cJSON_GetObjectItem(request_body, "teamname")->valuestring;
+		int pred = cJSON_GetObjectItem(request_body, "prediction")->valueint;
+		db_place_group_bet(db, user.id, team, pred);
 	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);

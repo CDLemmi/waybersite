@@ -12,6 +12,23 @@
 
 //****** game tables ******
 
+
+DB_RESULT db_get_group(Database db, char* g, char* teams) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT team FROM groups WHERE `group` = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, g, -1, SQLITE_STATIC);
+	char* team = teams;
+	while(1) {
+		int result = sqlite3_step(s);
+		if(result != SQLITE_ROW) break;
+		char* out = sqlite3_column_text(s, 0);
+		strcpy(team, out);
+		team += strlen(team) + 1;
+	}
+	return DB_DONE;
+}
+
+
 DB_RESULT db_create_config_tables(Database db) {
 	
 	char* err_msg = NULL;
@@ -40,6 +57,27 @@ DB_RESULT db_create_config_tables(Database db) {
 		sqlite3_free(err_msg);
 		exit(1);
 	}
+	
+	char* s4 = "DROP TABLE IF EXISTS groups;";
+	rc = sqlite3_exec(db.db, s4, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q2): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+	char* s3 = 
+		"CREATE TABLE groups ("
+		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+		"`group` TEXT NOT NULL,"
+		"team TEXT NOT NULL UNIQUE"
+		");";
+	rc = sqlite3_exec(db.db, s3, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q4): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
 
 	return DB_DONE;
 }
@@ -51,6 +89,16 @@ DB_RESULT db_create_match(Database db, char* group, char* datetime, char* team1,
 	sqlite3_bind_text(s, 2, datetime, -1, SQLITE_STATIC);
 	sqlite3_bind_text(s, 3, team1, -1, SQLITE_STATIC);
 	sqlite3_bind_text(s, 4, team2, -1, SQLITE_STATIC);
+	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
+
+DB_RESULT db_create_team(Database db, char* group, char* team) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "INSERT INTO groups (`group`, team) VALUES (?, ?);", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, group, -1, SQLITE_STATIC);
+	sqlite3_bind_text(s, 2, team, -1, SQLITE_STATIC);
 	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
 	sqlite3_finalize(s);
 	return DB_DONE;
@@ -69,7 +117,7 @@ DB_RESULT db_create_game_tables(Database db) {
 
 	int rc = sqlite3_exec(db.db, s1, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q4): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q5): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -84,7 +132,22 @@ DB_RESULT db_create_game_tables(Database db) {
 
 	rc = sqlite3_exec(db.db, s2, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q5): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q6): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+	char* s3 = 
+		"CREATE TABLE IF NOT EXISTS group_bets ("
+		"user_id INTEGER,"
+		"team TEXT NOT NULL,"
+		"prediction INTEGER"
+		");";
+	
+
+	rc = sqlite3_exec(db.db, s3, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q7): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -178,11 +241,44 @@ DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pr
 	sqlite3_bind_int(s2, 3, match_id);
 	sqlite3_bind_int(s2, 4, user_id);
 	if(sqlite3_step(s2) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s1);
 	sqlite3_finalize(s2);
 	return DB_DONE;
 
 }
 
+DB_RESULT db_get_group_bet(Database db, int user_id, char* team, int* pred) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT prediction FROM group_bets WHERE team = ? AND user_id = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, team, -1, SQLITE_STATIC);
+	sqlite3_bind_int(s, 2, user_id);
+	if(sqlite3_step(s) == SQLITE_ROW) {
+		*pred = sqlite3_column_int(s, 0);
+		return DB_DONE;
+	}
+	return DB_NO_RESULT;
+}
+
+DB_RESULT db_place_group_bet(Database db, int user_id, char* team, int pred) {
+	sqlite3_stmt* s1;
+	sqlite3_prepare_v2(db.db, "SELECT * FROM group_bets WHERE team = ? AND user_id = ?;", -1, &s1, NULL);
+	sqlite3_bind_text(s1, 1, team, -1, NULL);
+	sqlite3_bind_int(s1, 2, user_id);
+
+	sqlite3_stmt* s2;
+	if(sqlite3_step(s1) == SQLITE_ROW) {
+		sqlite3_prepare_v2(db.db, "UPDATE group_bets SET prediction = ? WHERE team = ? AND user_id = ?;", -1, &s2, NULL);
+	} else {
+		sqlite3_prepare_v2(db.db, "INSERT INTO group_bets (prediction, team, user_id) VALUES (?, ?, ?);", -1, &s2, NULL);
+	}
+	sqlite3_finalize(s1);
+	sqlite3_bind_int(s2, 1, pred);
+	sqlite3_bind_text(s2, 2, team, -1, SQLITE_STATIC);
+	sqlite3_bind_int(s2, 3, user_id);
+	if(sqlite3_step(s2) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s2);
+	return DB_DONE;
+}
 
 
 //****** user tables ******

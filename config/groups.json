@@ -5,7 +5,7 @@
       "teams": [
         "Mexiko",
         "Südafrika",
-        "Republik Korea",
+        "Südkorea",
         "Tschechien"
       ]
     }, {
@@ -43,7 +43,7 @@
    }, {
       "name": "F",
       "teams": [
-        "Niderland",
+        "Niederlande",
         "Japan",
         "Schweden",
         "Tunesien"
@@ -96,7 +96,6 @@
         "Ghana",
         "Panama"
       ]
-    }, {
     }
   ]
 }
