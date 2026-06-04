@@ -5,6 +5,7 @@ let tbNewUser = document.getElementById("tbNewUser");
 let tbPwCurrent = document.getElementById("tbPwCurrent");
 let tbPwNew = document.getElementById("tbPwNew");
 let tbPwNewConfirm = document.getElementById("tbPwNewConfirm");
+let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 let username;
 
@@ -25,6 +26,7 @@ async function onLoad()
     {
         const data = await response.json();
         username = data.username;
+        if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
         tblUserHeader.textContent=username;     
     }
 }

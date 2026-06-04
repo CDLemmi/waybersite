@@ -3,6 +3,7 @@ let tblUserHeader = document.getElementById("tblUserHeader");
 let tbAddUserName = document.getElementById("tbAddUserName");
 let tbAddUserPw = document.getElementById("tbAddUserPw");
 let btnAddUser = document.getElementById("btnAddUser");
+let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 onLoad();
 
@@ -20,6 +21,7 @@ async function onLoad()
     {
         const data = await response.json();
         tblUserHeader.textContent = data.username;
+        if(data.admin == 1) tblLinkAdmin.style.visibility = "visible";
 
         //Display user list
         const users = data.user_list;
