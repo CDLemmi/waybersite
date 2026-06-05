@@ -307,8 +307,6 @@ int main() {
 
 	Database db = init_database();
 	
-	user_create( "root", "test", 0, db);
-
 	init_game(db);
 
 	int server_fd, client_fd;
