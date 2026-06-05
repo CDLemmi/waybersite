@@ -25,8 +25,6 @@ async function onLoad()
         tblUserHeader.textContent = data.username;
         if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
 
-        console.log(data.matches);
-
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
         });
@@ -38,6 +36,7 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     const dateTimeObj = new Date(dateTime);
     const time = `${String(dateTimeObj.getHours()).padStart(2, "0")}:${String(dateTimeObj.getMinutes()).padStart(2, "0")} Uhr`;
     const day = `${String(dateTimeObj.getDate()).padStart(2, "0")}.${String(dateTimeObj.getMonth() + 1).padStart(2, "0")}.${dateTimeObj.getFullYear()}`;
+    const timeDiff = dateTimeObj.getTime() - Date.now();
 
     if(!days.includes(day))
     {
@@ -98,6 +97,15 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         tblPred2.textContent = (Math.max(0, parseInt(tblPred2.textContent) - 1));
         btnSavePred.style.visibility = "visible";
     });
+
+    if(timeDiff < 0)
+    {
+        div.querySelector("#btnPred1Up").style.visibility = "hidden";
+        div.querySelector("#btnPred2Up").style.visibility = "hidden";
+        div.querySelector("#btnPred1Down").style.visibility = "hidden";
+        div.querySelector("#btnPred2Down").style.visibility = "hidden";
+        div.querySelector("#btnSavePred").style.visibility = "hidden";
+    }
 
     divMatches.appendChild(div);
 }

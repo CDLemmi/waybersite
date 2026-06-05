@@ -196,8 +196,6 @@ DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pr
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*pred1 = sqlite3_column_int(s, 0);
 		*pred2 = sqlite3_column_int(s, 1);
-		printf("%d\n", *pred1);
-		printf("%d\n", *pred2);
 		return DB_DONE;
 	}
 	return DB_NO_RESULT;
