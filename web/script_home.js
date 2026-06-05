@@ -4,6 +4,7 @@ let tblUserHeader = document.getElementById("tblUserHeader");
 let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 let days = [];
+let isAdmin;
 
 onLoad();
 
@@ -23,7 +24,8 @@ async function onLoad()
         const data = await response.json();
        
         tblUserHeader.textContent = data.username;
-        if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
+        isAdmin = data.admin;
+        if(isAdmin == true) tblLinkAdmin.style.visibility = "visible";
 
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
@@ -48,7 +50,14 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     }
 
     const div = tplMatch.content.cloneNode(true);
-    div.querySelector("#tblTime").textContent=time;
+    if(isAdmin)
+    {
+        div.querySelector("#tblTime").textContent=`${time} - ID: ${id}`;
+    }
+    else
+    {
+        div.querySelector("#tblTime").textContent=time;
+    }
 
     let tblScore1 = div.querySelector("#tblScore1");
     let tblScore2 = div.querySelector("#tblScore2");
