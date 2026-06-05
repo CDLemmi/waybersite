@@ -205,7 +205,7 @@ DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pr
 
 DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FROM matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FROM played_matches WHERE match_id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*score1 = sqlite3_column_int(s, 0);

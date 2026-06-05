@@ -25,6 +25,8 @@ async function onLoad()
         tblUserHeader.textContent = data.username;
         if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
 
+        console.log(data.matches);
+
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
         });
@@ -73,7 +75,7 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     let tblPred2 = div.querySelector("#tblPred2");
     tblPred1.textContent = Math.max(pred1,0);
     tblPred1.id = `tblPred1_${id}`;
-    tblPred2.textContent = Math.max(pred1,0);
+    tblPred2.textContent = Math.max(pred2,0);
     tblPred2.id = `tblPred2_${id}`;
 
     let btnSavePred = div.querySelector("#btnSavePred");
@@ -112,8 +114,8 @@ async function btnSavePred_Click(event)
         return;
     }
 
-    const data = {"id": id, "score1": parseInt(tblPred1.textContent), "score2": parseInt(tblPred2.textContent)};
-    const response = await post_api("predict-match", data);
+    const data = {"id":  parseInt(id), "prediction1": parseInt(tblPred1.textContent), "prediction2": parseInt(tblPred2.textContent)};
+    const response = await post_api("place-bet", data);
 
     if(response.status === "200") btnSavePred.style.visibility = "visible";
 }
