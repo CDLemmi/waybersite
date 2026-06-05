@@ -86,7 +86,7 @@ async function post_userapi(api, body)
     });
 }
 
-async function post_api(api, body)
+async function post_api(api, body, verbose = true)
 {
     const result = await fetch(`/api/${api}`, {
         method: "POST",
@@ -97,24 +97,27 @@ async function post_api(api, body)
         }
     });
 
-    if(result.status === 200)
+    if(verbose)
     {
-        alert("Der Vorgang wurde erfolgreich ausgeführt");
+        if(result.status === 200)
+        {
+            alert("Der Vorgang wurde erfolgreich ausgeführt");
+        }
+        else if(result.status === 401)
+        {
+            alert("Fehler: Nicht angemeldet");
+        }
+        else if(result.status === 400)
+        {
+            const data = result.json();
+            alert(`Es ist ein interner Serverfehler aufgetreten: ${data.errorMes}`);
+        }
+        else
+        {
+            alert("Ein unbekannter Fehler ist aufgetreten!");
+        } 
     }
-    else if(result.status === 401)
-    {
-        alert("Fehler: Nicht angemeldet");
-    }
-    else if(result.status === 400)
-    {
-        const data = result.json();
-        alert(`Es ist ein interner Serverfehler aufgetreten: ${data.errorMes}`);
-    }
-    else
-    {
-        alert("Ein unbekannter Fehler ist aufgetreten!");
-    } 
-
+    
     return result;
 }
 

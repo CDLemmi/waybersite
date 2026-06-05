@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="stylesheets.css">
+<script src="script_global.js" defer></script>
+<script src="script_groups.js" defer></script>
+<html>
+    <head>
+        <title>Waybersite - Gruppen</title>
+    </head>   
+    <body>
+        <template id="tplTeam">
+            <div class="default_inline_row" style="width: 450px"> 
+                <p class="font_large font_bold" id="tblNumber"></p>
+                <img id="imgTeam" width=50px style="margin-left: 35px;"></img>
+                <p class="font_large" id="tblTeam" style="width: 200px;"></p>
+                <button id="btnUp" style="width: 30px; height: 30px; font-size: 20px; margin-left: auto">▲</button>
+                <button id="btnDown" style="width: 30px; height: 30px; font-size: 20px">▼</button>
+            </div>
+        </template>
+        <template id="tplGroup">
+            <div id="divGroup" class="box default_content" style="width: 500px; height: 275px;">
+                <div class="default_inline_row" style="width: 450px">
+                    <p id="tblGroup" class="font_large font_bold">Gruppe</p>
+                    <button id="btnSavePred" class="default_button" style="margin-left: auto; visibility: hidden;">Speichern</button>
+                </div>
+                <div id="divTeams" style="margin-top: -15px;"></div>
+            </div>
+        </template>
+        <div class="header">
+            <div class="header_inline">
+                <p>🐐 Waybersite</p>
+                <a class="font_large header_content" href="/home.html">Home</a>
+                <a class="font_large header_content" id="tblLinkGroups" href="/groups.html">Gruppen</a>
+                <a class="font_large header_content" id="tblLinkAdmin" href="/admin.html">Admin-Dashboard</a>
+                <p class="font_large header_content" id="tblUserHeader"></p>            
+            </div>
+            <div class="seperator" style="margin-top: -25px;"></div>
+        </div>
+        <div class="default_content">
+            <p class="font_large font_bold">Gruppen:</p>
+            <div class="default_inline_row">
+                <div id="divGroups" class="default_inline"></div>       
+            </div>
+        </div>
+        <div id="divCookies">
+            <p>Diese Webseite verwendet einen Cookie, um die Login-Session zu speichern. Dieser Cookie ist für die Funktion der Seite essentiell und kann somit nicht abgewählt werden.</p>
+            <button onclick="acceptCookies()" id="btnAcceptCookies">Alles Klar</button>
+        </div>
+        <div class="footer">
+            <div class="seperator"></div>
+            <p> 2026 by Seeloewen Software - <a href="/impressum.html" style="text-decoration: underline;">Impressum</a> - <a href="/privacy.html" style="text-decoration: underline;">Datenschutzerklärung</a> - Flag Icons by https://flagpedia.net</p>          </div>
+    </body>
+</html>
