@@ -138,6 +138,15 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* team = cJSON_GetObjectItem(request_body, "teamname")->valuestring;
 		int pred = cJSON_GetObjectItem(request_body, "prediction")->valueint;
 		db_place_group_bet(db, user.id, team, pred);
+	} else if(!strcmp(api_endpoint, "set-match-score")) {
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
+		int id = cJSON_GetObjectItem(request_body, "id")->valueint;
+		int score1 = cJSON_GetObjectItem(request_body, "score1")->valueint;
+		int score2 = cJSON_GetObjectItem(request_body, "score2")->valueint;
+		db_set_match_score(db, id, score1, score2);
 	} else {
 		*error = 1;
 		char* errMes = calloc(2048,1);

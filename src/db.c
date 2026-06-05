@@ -12,6 +12,16 @@
 
 //****** game tables ******
 
+DB_RESULT db_set_match_score(Database db, int id, int score1, int score2) {
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "INSERT OR REPLACE INTO played_matches (match_id, score1, score2) VALUES (?, ?, ?);", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	sqlite3_bind_int(s, 2, score1);
+	sqlite3_bind_int(s, 3, score2);
+	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s);
+	return DB_DONE;
+}
 
 DB_RESULT db_get_group(Database db, char* g, char* teams) {
 	sqlite3_stmt* s;
