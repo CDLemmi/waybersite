@@ -4,12 +4,17 @@ let tbAddUserName = document.getElementById("tbAddUserName");
 let tbAddUserPw = document.getElementById("tbAddUserPw");
 let btnAddUser = document.getElementById("btnAddUser");
 let tblLinkAdmin = document.getElementById("tblLinkAdmin");
+let tbScore1 = document.getElementById("tbScore1");
+let tbScore2 = document.getElementById("tbScore2");
+let tbMatchId = document.getElementById("tbMatchId");
+let btnUpdateMatch = document.getElementById("btnUpdateMatch");
 
 onLoad();
 
 async function onLoad()
 {
     btnAddUser.addEventListener("click", btnAddUser_Click);
+    btnUpdateMatch.addEventListener("click", btnUpdateMatch_Click);
 
     const response = await fetch("/api/dashboard-page");
 
@@ -176,4 +181,17 @@ async function btnDeleteUser_Click(event)
 
     const data = {"user_id": id};
     const response = await post_api("user-remove", data);
+}
+
+async function btnUpdateMatch_Click()
+{
+    if(tbMatchId.value === "" || tbScore1.value === "" || tbScore2.value === "")
+    {
+        alert("Bitte fülle alle erforderlichen Felder für das Aktualisieren eines Matches aus");
+        return;
+    }
+
+    const data = {"id": parseInt(tbMatchId.value), "score1": parseInt(tbScore1.value), "score2": parseInt(tbScore2.value)}
+    console.log(data);
+    const response = await post_api("set-match-score", data);
 }
