@@ -118,6 +118,8 @@ async function btnAddUser_Click()
     const data = {username_new: tbAddUserName.value, password: tbAddUserPw.value}
 
     const response = await post_api("user-add", data);
+
+    window.location.reload();
 }
 
 async function btnResetPw_Click(event)
@@ -181,6 +183,8 @@ async function btnDeleteUser_Click(event)
 
     const data = {"user_id": id};
     const response = await post_api("user-remove", data);
+
+    window.location.reload();
 }
 
 async function btnUpdateMatch_Click()
@@ -194,4 +198,6 @@ async function btnUpdateMatch_Click()
     const data = {"id": parseInt(tbMatchId.value), "score1": parseInt(tbScore1.value), "score2": parseInt(tbScore2.value)}
     console.log(data);
     const response = await post_api("set-match-score", data);
+
+    window.location.reload();
 }

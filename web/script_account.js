@@ -73,4 +73,6 @@ async function btnSaveUser_Click()
 
     const data = {username_new: tbNewUser.value}
     await post_api("username-change", data);
+
+    window.location.reload();
 }
