@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <sqlite3.h>
 #include <cjson/cJSON.h>
+#include <time.h>
 
 #include "http.h"
 #include "db.h"
@@ -16,8 +17,8 @@
 #define PORT 8080
 #define BUFFER_SIZE 4096
 
-
-
+const char* months[]   = {"Jan","Feb","Mar","Apr","May","Jun",
+                           "Jul","Aug","Sep","Oct","Nov","Dec"};
 
 
 //error = 0 -> false
@@ -172,6 +173,7 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 		char* name = cJSON_GetObjectItem(body, "username")->valuestring;
 		char* password = cJSON_GetObjectItem(body, "password")->valuestring;
 		char* session_id = handle_user_login(name, password, db);
+		int save_session = cJSON_GetObjectItem(body, "save_session")->valueint;
 		if(session_id == NULL) {
 			response.status_code = 401;
 		} else {
@@ -179,6 +181,29 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			char set_cookie[1024] = "session=";
 			strcat(set_cookie, session_id);
 			strcat(set_cookie, ";path=/;");
+
+			if(save_session == 1)
+			{
+				//Get current time and add 7 days
+				time_t now = time(NULL);
+				struct tm* t = localtime(&now);
+				t->tm_mday += 7;
+				mktime(t);
+				strcat(set_cookie, "Expires=");
+
+				char num_day[11];
+				snprintf(num_day, sizeof(num_day), "%d", t->tm_mday);
+				char num_year[12];
+				snprintf(num_year, sizeof(num_year), "%d", t->tm_year + 1900);
+
+				strcat(set_cookie, num_day);
+				strcat(set_cookie, " ");
+				strcat(set_cookie, months[t->tm_mon]);
+				strcat(set_cookie, " ");
+				strcat(set_cookie, num_year); //C tm is weird and saves the amount of years since 1900
+				strcat(set_cookie, " 12:00:00 UTC");
+			}
+
 			free(session_id); 
 			strcpy(response.set_cookie, set_cookie);
 		}

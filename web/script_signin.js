@@ -1,6 +1,7 @@
 let btnLogin = document.getElementById("btnLogin");
 let tbUsername = document.getElementById("tbUsername");
 let tbPassword = document.getElementById("tbPassword");
+let cbSaveLogin = document.getElementById("cbSaveLogin");
 
 onLoad();
 
@@ -17,7 +18,8 @@ async function btnLogin_Click()
         return;
     }
 
-    const body = { username: tbUsername.value, password: tbPassword.value};
+    const saveLogin = cbSaveLogin.checked == true ? 1 : 0; 
+    const body = { username: tbUsername.value, password: tbPassword.value, save_session: saveLogin};
     const response = await post_userapi("signin", body);
     
     if(response.status === 401)
