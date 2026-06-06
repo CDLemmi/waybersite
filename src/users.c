@@ -34,6 +34,7 @@ char* create_session_id() {
 int change_password(char* name, char* pw_old, char* pw_new, Database db) {
 	int user_id = 0;
 	User user;
+	strcpy(user.name, name);
 	if(user_get_from_name(&user, name, db)) {
 		return 1;
 	}
