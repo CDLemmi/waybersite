@@ -363,7 +363,7 @@ DB_RESULT db_get_user(Database db, int in_id, char* out_name, char* out_hash, in
 
 DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT id FROM users;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT id FROM users ORDER BY id ASC;", -1, &s, NULL);
 	int i;
 	for(i = 0; i < 256; i++) {
 		int result = sqlite3_step(s);
