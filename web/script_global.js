@@ -122,11 +122,24 @@ async function post_api(api, body, verbose = true)
 }
 
 function displayCookieBox()
-{
-    let divCookies = document.getElementById("divCookies");
-    if(!document.cookie.includes("cookiesAccepted="))
+{   
+    //Don't display box if the cookies were already accepted
+    if(!document.cookie.includes("cookiesAccepted=")) 
     {
-        divCookies.style.visibility = "visible";
+        const divCookies = document.createElement("div");
+        divCookies.id = "divCookies";
+
+        const tblCookies = document.createElement("p");
+        tblCookies.textContent = "Diese Webseite verwendet Cookies, um die  Login-Session zu speichern. Diese Cookies sind für die Funktion der Seite essentiell und können somit nicht abgewählt werden."
+
+        const btnAcceptCookies = document.createElement("button");
+        btnAcceptCookies.textContent = "Alles Klar";
+        btnAcceptCookies.addEventListener("click", acceptCookies);
+
+        divCookies.appendChild(tblCookies);
+        divCookies.appendChild(btnAcceptCookies);
+
+        document.body.appendChild(divCookies);
     }
 }
 
