@@ -84,6 +84,11 @@ function addGroup(id, team1, team2, team3, team4)
         i++;
     });
 
+    if(lockGroup(id))
+    {
+        divGroup.querySelector("#btnSavePred").style.visibility = "hidden";
+    }
+
     groups.push(g);
     divGroups.appendChild(divGroup);
 }
@@ -99,6 +104,12 @@ function createTeamDiv(divGroup, num, group, team)
     const btnSavePred = divGroup.querySelector("#btnSavePred");
     btnSavePred.dataset.id = group.id;
     btnSavePred.addEventListener("click", btnSavePred_Click);
+
+    if(lockGroup(group.id))
+    {
+        div.querySelector("#btnUp").style.visibility = "hidden";
+        div.querySelector("#btnDown").style.visibility = "hidden";
+    }
 
     div.querySelector("#btnUp").addEventListener("click", () => {
         group.up(team);
@@ -154,4 +165,40 @@ async function btnSavePred_Click(event)
     }
 
     alert("Die Vorhersage wurde erfolgreich gespeichert!");
+}
+
+function lockGroup(group)
+{
+    let currDate = Date.now();
+
+    console.log(group)
+
+    //For each group: If current time is greater than start time, lock group
+    switch(group)
+    {
+        case "A":
+            return currDate - new Date(2026, 5, 11, 21) > 0;
+        case "B":
+            return currDate - new Date(2026, 5, 12, 21) > 0;
+        case "C":
+            return currDate - new Date(2026, 5, 14) > 0;
+        case "D":
+            return currDate - new Date(2026, 5, 13, 3) > 0;
+        case "E":
+            return currDate - new Date(2026, 5, 14, 19) > 0;
+        case "F":
+            return currDate - new Date(2026, 5, 14, 22) > 0;
+        case "G":
+            return currDate - new Date(2026, 5, 15, 21) > 0;
+        case "H":
+            return currDate - new Date(2026, 5, 15, 18) > 0;
+        case "I":
+            return currDate - new Date(2026, 5, 16, 21) > 0;
+        case "J":
+            return currDate - new Date(2026, 5, 17, 3) > 0;
+        case "K":
+            return currDate - new Date(2026, 5, 17, 19) > 0;
+        case "L":
+            return currDate - new Date(2026, 5, 17, 22) > 0;
+    }
 }
