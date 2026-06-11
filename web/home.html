@@ -8,8 +8,8 @@
     </head>   
     <body>
         <template id="tplMatch">
-            <div class="box default_content" style="width: 900px; height: 150px;">
-                <div id="divTopRow" class="default_inline_row">
+            <div class="box content" style="width: 900px; height: 150px;">
+                <div id="divTopRow" class="inline_row">
                     <p id="tblTime" class="font_large">{time}</p>
                     <p id="tblScore1" class="font_large font_bold" style="margin-left: 60px; color: aqua"></p>
                     <img id="imgTeam1" width=50px style="margin-left: 20px;"></img>
@@ -17,7 +17,7 @@
                     <img id="imgTeam2" width=50px"></img>
                     <p id="tblScore2" class="font_large font_bold" style="margin-left: 20px; color: aqua"></p>
                 </div>
-                <div id="divBottomRow" class="default_inline_row">
+                <div id="divBottomRow" class="inline_row">
                     <p class="font_large">Vorhersage:</p>
                     <button id="btnPred1Up" style="margin-left: 160px; width: 30px; height: 30px; font-size: 20px;">▲</button>
                     <button id="btnPred1Down" style="width: 30px; font-size: 20px; margin-left: -15px; height: 30px">▼</button>
@@ -26,7 +26,7 @@
                     <p id="tblPred2" class="font_large"></p>
                     <button id="btnPred2Up" style="width: 30px; font-size: 20px; height: 30px">▲</button>
                     <button id="btnPred2Down" style="width: 30px; font-size: 20px; height: 30px; margin-left: -15px;">▼</button>                    
-                    <button id="btnSavePred" class="default_button" style="margin-top: 5px; margin-left: 100px; visibility: hidden;">Speichern</button>
+                    <button id="btnSavePred" class="large_button" style="margin-top: 5px; margin-left: 100px; visibility: hidden;">Speichern</button>
                     <p id="tblPoints" class="font_medium font_bold" style="margin-top: 5px; margin-left: 200px; visibility: hidden;"></button>
                 </div>
             </div>
@@ -39,17 +39,17 @@
                 <a class="font_large header_content" id="tblLinkAdmin" href="/admin.html">Admin-Dashboard</a>
                 <p class="font_large header_content" id="tblUserHeader"></p>            
             </div>
-            <div class="seperator" style="margin-top: -25px;"></div>
+            <div id="seperator" style="margin-top: -25px;"></div>
         </div>
-        <div class="default_content">
+        <div class="content">
             <p class="font_large">Matches</p>
             <p class="font_medium font_bold">Hier kannst du deine Vorhersagen für die Matches der WM 2026 abgeben! Stelle sicher, dass du deinen Tipp abgibst, bevor das jeweilige Spiel beginnt! Aktuell angezeigt werden alle Spiele der Gruppenphase. Vergiss nicht, jede Vorhersage zu speichern!</p>
-            <div class="default_inline_row">
-                <div id="divMatches" class="default_inline"></div>       
+            <div class="inline_row">
+                <div id="divMatches" class="inline_column"></div>       
             </div>
         </div>
         <div class="footer">
-            <div class="seperator"></div>
+            <div id="seperator"></div>
             <p> 2026 by Seeloewen Software - <a href="/impressum.html" style="text-decoration: underline;">Impressum</a> - <a href="/privacy.html" style="text-decoration: underline;">Datenschutzerklärung</a> - Flag Icons by https://flagpedia.net</p>          </div>
     </body>
 </html>

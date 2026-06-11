@@ -8,7 +8,7 @@
     </head>   
     <body>
         <template id="tplTeam">
-            <div class="default_inline_row" style="width: 450px"> 
+            <div class="inline_row" style="width: 450px"> 
                 <p class="font_large font_bold" id="tblNumber"></p>
                 <img id="imgTeam" width=50px style="margin-left: 35px;"></img>
                 <p class="font_large" id="tblTeam" style="width: 200px;"></p>
@@ -17,10 +17,10 @@
             </div>
         </template>
         <template id="tplGroup">
-            <div id="divGroup" class="box default_content" style="width: 500px; height: 275px;">
-                <div class="default_inline_row" style="width: 450px">
+            <div id="divGroup" class="box content" style="width: 500px; height: 275px;">
+                <div class="inline_row" style="width: 450px">
                     <p id="tblGroup" class="font_large font_bold">Gruppe</p>
-                    <button id="btnSavePred" class="default_button" style="margin-left: auto; visibility: hidden;">Speichern</button>
+                    <button id="btnSavePred" class="large_button" style="margin-left: auto; visibility: hidden;">Speichern</button>
                 </div>
                 <div id="divTeams" style="margin-top: -15px;"></div>
             </div>
@@ -33,17 +33,17 @@
                 <a class="font_large header_content" id="tblLinkAdmin" href="/admin.html">Admin-Dashboard</a>
                 <p class="font_large header_content" id="tblUserHeader"></p>            
             </div>
-            <div class="seperator" style="margin-top: -25px;"></div>
+            <div id="seperator" style="margin-top: -25px;"></div>
         </div>
-        <div class="default_content">
+        <div class="content">
             <p class="font_large">Gruppen</p>
             <p class="font_medium font_bold"">Passe die jeweiligen Gruppenkonstellationen an, um dein erwartetes Ergebnis vorherzusagen! Stelle sicher, dass du deine Ergebnisse für jede Gruppe mindestens einmal speicherst. Die Vorhersage für eine Gruppe wird gesperrt, sobald das erste Match dieser Gruppe beginnt.</p>
-            <div class="default_inline_row">
-                <div id="divGroups" class="default_inline"></div>       
+            <div class="inline_row">
+                <div id="divGroups" class="inline_column"></div>       
             </div>
         </div>
         <div class="footer">
-            <div class="seperator"></div>
+            <div id="seperator"></div>
             <p> 2026 by Seeloewen Software - <a href="/impressum.html" style="text-decoration: underline;">Impressum</a> - <a href="/privacy.html" style="text-decoration: underline;">Datenschutzerklärung</a> - Flag Icons by https://flagpedia.net</p>          </div>
     </body>
 </html>

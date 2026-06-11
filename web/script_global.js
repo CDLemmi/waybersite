@@ -153,7 +153,7 @@ function acceptCookies()
 function getUserBox()
 {
     const divUserBox = document.createElement("div");
-    divUserBox.classList = "box default_content";
+    divUserBox.classList = "box content";
     divUserBox.style.width = "200px";
     divUserBox.style.height = "100px";
     divUserBox.style.position = "fixed";
