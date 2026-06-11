@@ -109,11 +109,17 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
 
     if(timeDiff < 0)
     {
+        const divBottomRow = div.querySelector("#divBottomRow");
+        divBottomRow.removeChild(div.querySelector("#btnSavePred"));
+
         div.querySelector("#btnPred1Up").style.visibility = "hidden";
         div.querySelector("#btnPred2Up").style.visibility = "hidden";
         div.querySelector("#btnPred1Down").style.visibility = "hidden";
         div.querySelector("#btnPred2Down").style.visibility = "hidden";
-        div.querySelector("#btnSavePred").style.visibility = "hidden";
+
+        const tblPoints = div.querySelector("#tblPoints");
+        tblPoints.style.visibility = "visible";
+        tblPoints.textContent = `+ ${calcPoints(pred1, pred2, score1, score2)} Punkte`;
     }
 
     divMatches.appendChild(div);
@@ -135,4 +141,19 @@ async function btnSavePred_Click(event)
     const response = await post_api("place-bet", data);
 
     if(response.status === "200") btnSavePred.style.visibility = "visible";
+}
+
+function calcPoints(pred1, pred2, score1, score2)
+{
+    let points = 0;
+
+    if(pred1 > pred2 && score1 > score2 //2 points for guessing the right winner
+        || pred1 < pred2 && score1 < score2
+        || pred1 === pred2 && score1 === score2) points = 2;
+    
+    if((pred1 - pred2 === score1 - score2) && (score1 != score2)) points = 3; //3 points for the correct goal diff (except when tie)
+
+    if(pred1 === score1 && pred2 === score2) points = 4; //4 points for the correct match score
+
+    return points;
 }
