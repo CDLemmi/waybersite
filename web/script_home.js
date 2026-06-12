@@ -117,9 +117,12 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         div.querySelector("#btnPred1Down").style.visibility = "hidden";
         div.querySelector("#btnPred2Down").style.visibility = "hidden";
 
-        const tblPoints = div.querySelector("#tblPoints");
-        tblPoints.style.visibility = "visible";
-        tblPoints.textContent = `+ ${calcPoints(pred1, pred2, score1, score2)} Punkte`;
+        if((score1 != -1 && score2 != -1))
+        {
+            const tblPoints = div.querySelector("#tblPoints");
+            tblPoints.style.visibility = "visible";
+            tblPoints.textContent = `+ ${calcPoints(pred1, pred2, score1, score2)} Punkte`;
+        }
     }
 
     divMatches.appendChild(div);
