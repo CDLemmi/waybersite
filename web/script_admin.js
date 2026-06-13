@@ -8,6 +8,7 @@ let tbScore1 = document.getElementById("tbScore1");
 let tbScore2 = document.getElementById("tbScore2");
 let tbMatchId = document.getElementById("tbMatchId");
 let btnUpdateMatch = document.getElementById("btnUpdateMatch");
+let btnUpdatePoints = document.getElementById("btnUpdatePoints");
 
 onLoad();
 
@@ -15,6 +16,7 @@ async function onLoad()
 {
     btnAddUser.addEventListener("click", btnAddUser_Click);
     btnUpdateMatch.addEventListener("click", btnUpdateMatch_Click);
+    btnUpdatePoints.addEventListener("click", btnUpdatePoints_Click);
 
     const response = await fetch("/api/dashboard-page");
 
@@ -200,4 +202,9 @@ async function btnUpdateMatch_Click()
     const response = await post_api("set-match-score", data);
 
     window.location.reload();
+}
+
+async function btnUpdatePoints_Click()
+{
+    const response = await post_api("update-points", {});
 }

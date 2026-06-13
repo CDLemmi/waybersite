@@ -61,10 +61,11 @@ DB_RESULT db_get_user_from_name(Database db, char* in_name, int* out_id, char* o
 
 DB_RESULT db_get_user(Database db, int in_id, char* out_name, char* out_hash, int* out_admin);
 
-
 DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count);
 		
 DB_RESULT db_delete_user(Database db, int id);
+
+DB_RESULT db_set_points(Database db, int user_id, int points);
 
 void db_create_session(Database db, char* session_id, int user_id);
 

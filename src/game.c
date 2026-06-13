@@ -31,7 +31,7 @@ cJSON* get_match_list(int user_id, Database db) {
 		cJSON_AddStringToObject(match, "team1", team1);
 		cJSON_AddStringToObject(match, "team2", team2);
 
-		int pred1 = -1, pred2 = -1;
+		int pred1 = 0, pred2 = 0;
 		db_get_bet(db, ids[i], user_id, &pred1, &pred2); 
 		cJSON_AddNumberToObject(match, "prediction1", pred1);
 		cJSON_AddNumberToObject(match, "prediction2", pred2);
@@ -178,3 +178,54 @@ int is_bet_valid(int match_id, Database db) {
 
 }
 
+void update_points(Database db)
+{
+	//Get all match ids before updating users
+	int ids[256];
+	int id_count = 0;
+	db_get_match_ids(db, ids, &id_count);
+
+	int users[128];
+	int user_count = 0;
+	db_get_user_list(db, users, &user_count);
+
+	//Update the scores for every user
+	for(int i = 0; i < user_count; i++)
+	{
+		int user_id = users[i];
+		int points = 0;
+
+		for(int j = 0; j < id_count; j++)
+		{
+			int p1 = 0, p2 = 0;
+			int s1 = -1, s2 = -1;	
+				
+			db_get_match_score(db, ids[j], &s1, &s2);
+
+			if(s1 == -1 || s2 == -1) continue; //Skip matches that aren't finished
+
+			db_get_bet(db, ids[j], user_id, &p1, &p2);		
+			points += calc_score(p1, p2, s1, s2);
+
+		}
+			
+		db_set_points(db, user_id, points);
+	}
+}
+
+int calc_score(int pred1, int pred2, int score1, int score2)
+{
+	int points = 0;
+
+	if((pred1 > pred2 && score1 > score2) //2 points for guessing the right winner
+        || (pred1 < pred2 && score1 < score2)
+        || (pred1 == pred2 && score1 == score2)) points = 2;
+    
+    if((pred1 - pred2 == score1 - score2) && score1 != score2) points = 3; //3 points for the correct goal diff (except when tie)
+
+    if(pred1 == score1 && pred2 == score2) points = 4; //4 points for the correct match score
+
+	printf("%d, %d, %d, %d, %d\n", pred1, pred2, score1, score2, points);
+
+    return points;
+}

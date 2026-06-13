@@ -141,7 +141,11 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* team = cJSON_GetObjectItem(request_body, "teamname")->valuestring;
 		int pred = cJSON_GetObjectItem(request_body, "prediction")->valueint;
 		db_place_group_bet(db, user.id, team, pred);
-	} else if(!strcmp(api_endpoint, "set-match-score")) {
+	} else if(!strcmp(api_endpoint, "update-points")) 
+	{
+		update_points(db);
+	}
+	else if(!strcmp(api_endpoint, "set-match-score")) {
 		if(user.admin == 0) {
 			*error = 2;
 			return NULL;

@@ -388,7 +388,39 @@ DB_RESULT db_delete_user(Database db, int id) {
 	return DB_DONE;
 }
 
+DB_RESULT db_set_points(Database db, int user_id, int points)
+{
+	sqlite3_stmt* s1;
+	sqlite3_prepare_v2(db.db, "SELECT user_id FROM points WHERE user_id = ?;", -1, &s1, NULL);
+	sqlite3_bind_int(s1, 1, user_id);
+	int result = sqlite3_step(s1);
 
+	sqlite3_stmt* s2;
+	if(result != SQLITE_ROW) //If user has no entry, add one
+	{
+		sqlite3_prepare_v2(db.db, "INSERT INTO points (user_id, points) VALUES (?, ?);", -1, &s2, NULL);
+		sqlite3_bind_int(s2, 1, user_id);
+		sqlite3_bind_int(s2, 2, points);
+		result = sqlite3_step(s2);
+	}
+	else //If an entry exists, update it
+	{
+		sqlite3_prepare_v2(db.db, "UPDATE points SET points = ? WHERE user_id = ?;", -1, &s2, NULL);
+		sqlite3_bind_int(s2, 1, points);
+		sqlite3_bind_int(s2, 2, user_id);
+		result = sqlite3_step(s2);
+	}
+
+	if(result != SQLITE_DONE)
+	{
+		return DB_ERROR;
+	}
+
+	sqlite3_finalize(s1);
+	sqlite3_finalize(s2);
+
+	return DB_DONE;
+}
 
 Database init_database() {
 	Database db;
@@ -415,6 +447,22 @@ Database init_database() {
 		exit(1);
 	}
 
+	//DB entry for user points
+	char* sql_create_table_points =
+		"CREATE TABLE IF NOT EXISTS points ("
+		"user_id INTEGER PRIMARY KEY,"
+		"points INTEGER"
+		");";
+
+	err_msg = NULL;
+
+	rc = sqlite3_exec(db.db, sql_create_table_points, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK)
+	{
+		fprintf(stderr, "sql error: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
 	
 	char* s2 = 
 		"CREATE TABLE IF NOT EXISTS sessions ("
