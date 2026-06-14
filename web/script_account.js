@@ -26,6 +26,7 @@ async function onLoad()
     {
         const data = await response.json();
         username = data.username;
+        tblPoints.textContent = `${data.points} Punkte`;
         if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
         tblUserHeader.textContent=username;     
     }

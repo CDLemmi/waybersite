@@ -25,6 +25,7 @@ async function onLoad()
        
         tblUserHeader.textContent = data.username;
         isAdmin = data.admin;
+        tblPoints.textContent = `${data.points} Punkte`;
         if(isAdmin == true) tblLinkAdmin.style.visibility = "visible";
 
         data.matches.forEach(e => {

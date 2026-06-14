@@ -53,6 +53,8 @@ DB_RESULT db_set_match_score(Database db, int id, int score1, int score2);
 
 DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count);
 
+DB_RESULT db_get_points_user(Database db, int id, int* out_points);
+
 // user management
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);

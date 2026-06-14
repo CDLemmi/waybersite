@@ -25,6 +25,9 @@ const char* months[]   = {"Jan","Feb","Mar","Apr","May","Jun",
 char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int* error, Database db) {
 	if(!strcmp(api_endpoint, "account_page")) {
 		cJSON* json = cJSON_CreateObject();
+		int points;
+		db_get_points_user(db, user.id, &points);
+		cJSON_AddNumberToObject(json, "points", points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 		char* json_response = cJSON_Print(json);
@@ -44,6 +47,9 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int id_count;
 		db_get_user_list(db, ids, &id_count);
 		cJSON* json = cJSON_CreateObject();
+		int points;
+		db_get_points_user(db, user.id, &points);
+		cJSON_AddNumberToObject(json, "points", points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON* user_list = cJSON_CreateArray();
@@ -114,6 +120,9 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		user_save(user, db);
 	} else if(!strcmp(api_endpoint, "match-page")) {
 		cJSON* json = cJSON_CreateObject();
+		int points;
+		db_get_points_user(db, user.id, &points);
+		cJSON_AddNumberToObject(json, "points", points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
@@ -131,6 +140,9 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 	} else if(!strcmp(api_endpoint, "group-page")) {
 		cJSON* groups = get_groups(user.id, db);
 		cJSON* json = cJSON_CreateObject();
+		int points;
+		db_get_points_user(db, user.id, &points);
+		cJSON_AddNumberToObject(json, "points", points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON_AddItemToObject(json, "groups", groups);
@@ -149,6 +161,9 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 	{
 		//Default page content
 		cJSON* json = cJSON_CreateObject();
+		int user_points;
+		db_get_points_user(db, user.id, &user_points);
+		cJSON_AddNumberToObject(json, "points", user_points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 
@@ -192,11 +207,6 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 
 	return NULL;
 }
-
-
-
-
-
 
 HTTPResponse handle_request(HTTPRequest request, Database db) {
 	HTTPResponse response = {0};

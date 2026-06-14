@@ -130,6 +130,12 @@ table { border-collapse: collapse; }
     width: 90%;
 }
 
+.header_right
+{
+    text-align: right;
+    margin-right: 30px;
+    font-size: 26px
+}
 
 /* Id specific elements */
 
@@ -176,14 +182,6 @@ table { border-collapse: collapse; }
 {
     margin: 20px 10px;
     padding: 5px 80px;
-}
-
-#tblUserHeader
-{
-    text-align: right;
-    margin-left: auto;
-    margin-right: 30px;
-    font-size: 26px
 }
 
 #tblLinkAdmin

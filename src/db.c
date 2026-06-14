@@ -316,6 +316,21 @@ DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count)
 	}
 }
 
+DB_RESULT db_get_points_user(Database db, int id, int* out_points)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT points FROM points WHERE user_id = ?", -1, &s, NULL);
+	sqlite3_bind_int(s, 1, id);
+	int result = sqlite3_step(s);
+
+	if(result != SQLITE_ROW)
+	{
+		return DB_ERROR;
+	}
+
+	*out_points = sqlite3_column_int(s, 0);
+	return DB_DONE;
+}
 
 //****** user tables ******
 
