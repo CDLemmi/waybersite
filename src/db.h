@@ -51,6 +51,8 @@ DB_RESULT db_create_team(Database db, char* group, char* team);
 
 DB_RESULT db_set_match_score(Database db, int id, int score1, int score2);
 
+DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count);
+
 // user management
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);

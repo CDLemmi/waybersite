@@ -290,6 +290,32 @@ DB_RESULT db_place_group_bet(Database db, int user_id, char* team, int pred) {
 	return DB_DONE;
 }
 
+DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT * FROM points ORDER BY points", -1, &s, NULL);
+
+	int i;
+	for(i = 0; 1; i++) 
+	{
+		int result = sqlite3_step(s);
+		if(result == SQLITE_ROW) 
+		{
+			user_ids[i] = sqlite3_column_int(s, 0);
+			points[i] = sqlite3_column_int(s, 1);
+		} 
+		else if(result == SQLITE_DONE) 
+		{
+			*count = i;
+			return DB_DONE;
+		} 
+		else 
+		{
+			return DB_ERROR;
+		}
+	}
+}
+
 
 //****** user tables ******
 

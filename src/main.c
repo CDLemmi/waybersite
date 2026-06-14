@@ -145,6 +145,36 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 	{
 		update_points(db);
 	}
+	else if (!strcmp(api_endpoint, "leaderboard-page"))
+	{
+		//Default page content
+		cJSON* json = cJSON_CreateObject();
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
+
+		//Leaderboard
+		int user_ids[128];
+		int points[128];
+		int count;
+
+		db_get_points(db, user_ids, points, &count);
+
+		cJSON* leaderboard = cJSON_AddArrayToObject(json, "leaderboard");
+		for(int i = 0; i < count; i++)
+		{
+			char name[128];
+			char hash[HASH_SIZE];
+			int admin;
+			db_get_user(db, user_ids[i], name, hash, &admin);
+			cJSON* entry = cJSON_CreateObject();
+			cJSON_AddItemToObject(entry, "name", cJSON_CreateString(name));
+			cJSON_AddNumberToObject(entry, "points", points[i]);
+			cJSON_AddItemToArray(leaderboard, entry);
+		}
+
+		char* s = cJSON_Print(json);
+		return s;
+	}
 	else if(!strcmp(api_endpoint, "set-match-score")) {
 		if(user.admin == 0) {
 			*error = 2;
