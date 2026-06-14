@@ -293,7 +293,7 @@ DB_RESULT db_place_group_bet(Database db, int user_id, char* team, int pred) {
 DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count)
 {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT * FROM points ORDER BY points", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT * FROM points ORDER BY points DESC", -1, &s, NULL);
 
 	int i;
 	for(i = 0; 1; i++) 
