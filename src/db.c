@@ -418,14 +418,55 @@ DB_RESULT db_get_user_list(Database db, int* id_list, int* id_count) {
 
 
 DB_RESULT db_delete_user(Database db, int id) {
-	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "DELETE FROM users WHERE id = ?;", -1, &s, NULL);
-	sqlite3_bind_int(s, 1, id);
-	int result = sqlite3_step(s);
+	//users table
+	sqlite3_stmt* s1;
+	sqlite3_prepare_v2(db.db, "DELETE FROM users WHERE id = ?;", -1, &s1, NULL);
+	sqlite3_bind_int(s1, 1, id);
+	int result = sqlite3_step(s1);
 	if(result != SQLITE_DONE) {
 		return DB_ERROR;
 	}	
-	sqlite3_finalize(s);
+	sqlite3_finalize(s1);
+
+	//sessions table
+	sqlite3_stmt* s2;
+	sqlite3_prepare_v2(db.db, "DELETE FROM sessions WHERE user_id = ?;", -1, &s2, NULL);
+	sqlite3_bind_int(s2, 1, id);
+	result = sqlite3_step(s2);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}	
+	sqlite3_finalize(s2);
+
+	//bets table
+	sqlite3_stmt* s3;
+	sqlite3_prepare_v2(db.db, "DELETE FROM bets WHERE user_id = ?;", -1, &s3, NULL);
+	sqlite3_bind_int(s3, 1, id);
+	result = sqlite3_step(s3);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}	
+	sqlite3_finalize(s3);
+
+	//group_bets table
+	sqlite3_stmt* s4;
+	sqlite3_prepare_v2(db.db, "DELETE FROM group_bets WHERE user_id = ?;", -1, &s4, NULL);
+	sqlite3_bind_int(s4, 1, id);
+	result = sqlite3_step(s4);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}	
+	sqlite3_finalize(s4);
+
+	//points table
+	sqlite3_stmt* s5;
+	sqlite3_prepare_v2(db.db, "DELETE FROM points WHERE user_id = ?;", -1, &s5, NULL);
+	sqlite3_bind_int(s5, 1, id);
+	result = sqlite3_step(s5);
+	if(result != SQLITE_DONE) {
+		return DB_ERROR;
+	}	
+	sqlite3_finalize(s5);
 	return DB_DONE;
 }
 
