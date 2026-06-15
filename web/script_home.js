@@ -5,6 +5,7 @@ let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 let days = [];
 let isAdmin;
+let scroll = 0;
 
 onLoad();
 
@@ -31,6 +32,9 @@ async function onLoad()
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2);
         });
+
+        //Scroll to the current day
+        scrollTo({top: scroll});
     };
 }
 
@@ -47,6 +51,13 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         tblDay.classList="font_large";
         divMatches.appendChild(tblDay);
         days.push(day);
+
+        console.log(window.innerHeight);
+        if(isCurrentDay(dateTime))
+        {
+            //Save scroll offset for when the page is done loading
+            scroll = tblDay.getBoundingClientRect().top - 20;
+        }
     }
 
     const div = tplMatch.content.cloneNode(true);
@@ -150,4 +161,14 @@ async function btnSavePred_Click(event)
     const response = await post_api("place-bet", data);
 
     if(response.status === "200") btnSavePred.style.visibility = "visible";
+}
+
+function isCurrentDay(dateTime)
+{
+    const dateTimeObj = new Date(dateTime);
+    const currentDate = new Date(Date.now());
+
+    return (currentDate.getDate() == dateTimeObj.getDate()
+        && currentDate.getMonth() == dateTimeObj.getMonth()
+        && currentDate.getFullYear() == dateTimeObj.getFullYear());
 }
