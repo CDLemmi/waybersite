@@ -162,7 +162,7 @@ int init_game(Database db) {
 
 
 
-int is_bet_valid(int match_id, Database db) {
+int match_hasnt_started(int match_id, Database db) {
 	
 	char iso[128];
 	db_get_time(db, match_id, iso);

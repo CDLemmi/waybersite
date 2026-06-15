@@ -1,4 +1,6 @@
 let tabPredictions = document.getElementById("tabPredictions");
+let tblContentHeader = document.getElementById("tblContentHeader");
+let tblContentDesc = document.getElementById("tblContentDesc");
 
 let score1 = 0;
 let score2 = 0;
@@ -36,14 +38,26 @@ async function onLoad()
         score2 = data.score2;
 
         tblContentHeader.textContent = `Gewähltes Match: ${data.team1} vs. ${data.team2}`;
+        if(data.score1 != -1 && data.score2 != -1)
+        {
+            //If the match has already concluded, also show score
+            tblContentHeader.textContent += ` (${data.score1} : ${data.score2})`
+        } 
 
         //Predictions
         const predictions = data.predictions;
-        predictions.forEach(element => {
-            addEntryToTable(element.user, element.pred1, element.pred2);
-        });
-
-        console.log(data);
+        if(typeof predictions !== "undefined")
+        {
+            predictions.forEach(element => {
+                addEntryToTable(element.user, element.pred1, element.pred2);
+            });
+        }
+        else //If the match has not started or doesn't exist, show error
+        {
+            tblContentHeader.textContent = "Ungültiges Match";
+            tblContentDesc.textContent = "Das ausgewählte Spiel existiert nicht oder steht noch bevor.";
+            tabPredictions.style.visibility = "hidden";
+        }
     };
 }
 
@@ -60,12 +74,16 @@ function addEntryToTable(user, pred1, pred2)
     if(pred1 != -1 && pred2 != -1)
     {
         scoreCell.textContent = `${pred1} : ${pred2}`;
-        pointsCell.textContent = calcPoints(pred1, pred2, score1, score2)
+
+        pointsCell.textContent = "-"
+        if(score1 != -1 && score2 != -1)
+        {
+            pointsCell.textContent = calcPoints(pred1, pred2, score1, score2)     
+        }
     }
     else
     {
         scoreCell.textContent = "-";
         pointsCell.textContent = "0";
     }
-
 }

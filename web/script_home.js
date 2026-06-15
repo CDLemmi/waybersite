@@ -39,7 +39,6 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     const dateTimeObj = new Date(dateTime);
     const time = `${String(dateTimeObj.getHours()).padStart(2, "0")}:${String(dateTimeObj.getMinutes()).padStart(2, "0")} Uhr`;
     const day = `${String(dateTimeObj.getDate()).padStart(2, "0")}.${String(dateTimeObj.getMonth() + 1).padStart(2, "0")}.${dateTimeObj.getFullYear()}`;
-    const timeDiff = dateTimeObj.getTime() - Date.now();
 
     if(!days.includes(day))
     {
@@ -108,8 +107,9 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         btnSavePred.style.visibility = "visible";
     });
 
-    if(timeDiff < 0)
+    if(hasMatchStarted(dateTime))
     {
+        //Hide all controls for changing the score when the match has started
         const divBottomRow = div.querySelector("#divBottomRow");
         divBottomRow.removeChild(div.querySelector("#btnSavePred"));
 
@@ -118,11 +118,13 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         div.querySelector("#btnPred1Down").style.visibility = "hidden";
         div.querySelector("#btnPred2Down").style.visibility = "hidden";
 
+        //Add link to page that shows other players predictions
+        div.querySelector("#divMatch").addEventListener("click", () => window.location.assign(`/match_predictions.html?match_id=${id}`));
+        div.querySelector("#divMatch").style.cursor="pointer";
+
+        //Points display
         if((score1 != -1 && score2 != -1))
         {
-            div.querySelector("#divMatch").addEventListener("click", () => window.location.assign(`/match_predictions.html?match_id=${id}`));
-            div.querySelector("#divMatch").style.cursor="pointer";
-
             const tblPoints = div.querySelector("#tblPoints");
             tblPoints.style.visibility = "visible";
             tblPoints.textContent = `+ ${calcPoints(pred1, pred2, score1, score2)} Punkte`;

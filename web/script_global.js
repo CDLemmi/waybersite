@@ -219,3 +219,11 @@ function calcPoints(pred1, pred2, score1, score2)
 
     return points;
 }
+
+function hasMatchStarted(dateTime)
+{
+    const dateTimeObj = new Date(dateTime);
+    const timeDiff = dateTimeObj.getTime() - Date.now();
+
+    return timeDiff < 0;
+}

@@ -132,7 +132,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int match_id = cJSON_GetObjectItem(request_body, "id")->valueint;
 		int pred1 = cJSON_GetObjectItem(request_body, "prediction1")->valueint;
 		int pred2 = cJSON_GetObjectItem(request_body, "prediction2")->valueint;
-		if(is_bet_valid(match_id, db)) {
+		if(match_hasnt_started(match_id, db)) {
 			db_place_bet(db, match_id, user.id, pred1, pred2);
 		} else {
 			*error = 2;
@@ -211,7 +211,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char team2[128];
 		db_get_match(db, match_id, t, team1, team2);
 
-		if(score1 == -1 || score2 == -1)
+		if(match_hasnt_started(match_id, db)) //Only send data if the match has already started, else just send basic content
 		{
 			char* s = cJSON_Print(json);
 			return s;
@@ -222,6 +222,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 			cJSON_AddNumberToObject(json, "score2", score2);
 			cJSON_AddItemToObject(json, "team1", cJSON_CreateString(team1));
 			cJSON_AddItemToObject(json, "team2", cJSON_CreateString(team2));
+			printf("guten");
 		}
 
 		//Add array with all user predictions
