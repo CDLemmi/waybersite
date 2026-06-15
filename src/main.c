@@ -190,6 +190,70 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* s = cJSON_Print(json);
 		return s;
 	}
+	else if(!strcmp(api_endpoint, "match-preds-page"))
+	{
+		int match_id = cJSON_GetObjectItem(request_body, "match_id")->valueint;
+
+		//Default page content
+		cJSON* json = cJSON_CreateObject();
+		int user_points;
+		db_get_points_user(db, user.id, &user_points);
+		cJSON_AddNumberToObject(json, "points", user_points);
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
+
+		//Check if match is concluded and get match score and name
+		int score1 = -1;
+		int score2 = -1;
+		db_get_match_score(db, match_id, &score1, &score2);
+		char t[128];
+		char team1[128];
+		char team2[128];
+		db_get_match(db, match_id, t, team1, team2);
+
+		if(score1 == -1 || score2 == -1)
+		{
+			char* s = cJSON_Print(json);
+			return s;
+		}
+		else
+		{
+			cJSON_AddNumberToObject(json, "score1", score1);
+			cJSON_AddNumberToObject(json, "score2", score2);
+			cJSON_AddItemToObject(json, "team1", cJSON_CreateString(team1));
+			cJSON_AddItemToObject(json, "team2", cJSON_CreateString(team2));
+		}
+
+		//Add array with all user predictions
+		int user_ids[128];
+		int user_count;
+		db_get_user_list(db, user_ids, &user_count);
+
+		cJSON* array = cJSON_AddArrayToObject(json, "predictions");
+
+		for(int i = 0; i < user_count; i++) 
+		{
+			cJSON* entry = cJSON_CreateObject();
+
+			int pred1 = -1;
+			int pred2 = -1;
+			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2);
+
+			char name[128];
+			char hash[HASH_SIZE];
+			int admin;
+			db_get_user(db, user_ids[i], name, hash, &admin);
+
+			cJSON_AddItemToObject(entry, "user", cJSON_CreateString(name));
+			cJSON_AddNumberToObject(entry, "pred1", pred1);
+			cJSON_AddNumberToObject(entry, "pred2", pred2);
+
+			cJSON_AddItemToArray(array, entry);
+		}
+
+		char* s = cJSON_Print(json);
+		return s;
+	}
 	else if(!strcmp(api_endpoint, "set-match-score")) {
 		if(user.admin == 0) {
 			*error = 2;
@@ -301,6 +365,10 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 		char path[256] = "web";
 		strcat(path, request.path);
 		char* ext = strrchr(path, '.') + 1;
+
+		char* params = strchr(path, '?');
+		if(params) *params = '\0';
+
 		int ext_not_supported = 0;
 		if(ext == NULL + 1) {
 			ext_not_supported = 1;
