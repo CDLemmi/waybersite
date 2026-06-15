@@ -204,3 +204,18 @@ function scheduleHideUserbox()
         }
     }, 100);
 }
+
+function calcPoints(pred1, pred2, score1, score2)
+{
+    let points = 0;
+
+    if(pred1 > pred2 && score1 > score2 //2 points for guessing the right winner
+        || pred1 < pred2 && score1 < score2
+        || pred1 === pred2 && score1 === score2) points = 2;
+    
+    if((pred1 - pred2 === score1 - score2) && (score1 != score2)) points = 3; //3 points for the correct goal diff (except when tie)
+
+    if(pred1 === score1 && pred2 === score2) points = 4; //4 points for the correct match score
+
+    return points;
+}
