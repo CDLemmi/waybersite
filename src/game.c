@@ -169,7 +169,7 @@ int match_hasnt_started(int match_id, Database db) {
 
 
     struct tm t = {0};
-    strptime(iso, "%Y-%m-%dT%H:%M:%S", &t);
+    strptime(iso, "%Y-%m-%d %H:%M:%S", &t);
     t.tm_isdst = -1; // let mktime figure out DST
     int time_match = mktime(&t);
 	
