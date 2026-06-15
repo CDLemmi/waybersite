@@ -225,7 +225,7 @@ DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2
 
 DB_RESULT db_get_time(Database db, int match_id, char* out_time) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT `datetime` FROM matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT `datetime` FROM matches WHERE id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	if(sqlite3_step(s) != SQLITE_ROW) return DB_ERROR;
 	char* time = sqlite3_column_text(s, 0);
