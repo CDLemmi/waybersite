@@ -22,6 +22,8 @@ async function onLoad()
         leaderboard.forEach(element => {
             addUserToTable(element.name, element.points);
         });
+
+        addUserToTable("Men zu dem dim", 0) //haha
     }
 }
 
