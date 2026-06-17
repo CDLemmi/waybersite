@@ -35,6 +35,8 @@ onLoad();
 
 async function onLoad()
 {
+    btnUp.addEventListener("click", () => window.scrollTo({top: 0}));
+
     const response = await fetch("/api/group-page");
     if(response.status === 400)
     {

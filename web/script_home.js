@@ -11,6 +11,8 @@ onLoad();
 
 async function onLoad()
 {
+    btnUp.addEventListener("click", () => window.scrollTo({top: 0}));
+
     const response = await fetch("/api/match-page");
     if(response.status === 401)
     {
