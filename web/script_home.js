@@ -54,7 +54,6 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         divMatches.appendChild(tblDay);
         days.push(day);
 
-        console.log(window.innerHeight);
         if(isCurrentDay(dateTime))
         {
             //Save scroll offset for when the page is done loading

@@ -174,8 +174,6 @@ function lockGroup(group)
 {
     let currDate = Date.now();
 
-    console.log(group)
-
     //For each group: If current time is greater than start time, lock group
     switch(group)
     {
