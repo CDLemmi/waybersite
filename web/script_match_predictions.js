@@ -70,20 +70,11 @@ function addEntryToTable(user, pred1, pred2)
     const pointsCell = row.insertCell();
 
     nameCell.textContent = user;
+    scoreCell.textContent = `${pred1} : ${pred2}`;
 
-    if(pred1 != -1 && pred2 != -1)
+    pointsCell.textContent = "-"
+    if(score1 != -1 && score2 != -1)
     {
-        scoreCell.textContent = `${pred1} : ${pred2}`;
-
-        pointsCell.textContent = "-"
-        if(score1 != -1 && score2 != -1)
-        {
-            pointsCell.textContent = calcPoints(pred1, pred2, score1, score2)     
-        }
-    }
-    else
-    {
-        scoreCell.textContent = "-";
-        pointsCell.textContent = "0";
+        pointsCell.textContent = calcPoints(pred1, pred2, score1, score2)     
     }
 }

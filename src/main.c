@@ -236,8 +236,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		{
 			cJSON* entry = cJSON_CreateObject();
 
-			int pred1 = -1;
-			int pred2 = -1;
+			int pred1 = 0;
+			int pred2 = 0;
 			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2);
 
 			char name[128];
