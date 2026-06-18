@@ -201,6 +201,7 @@ async function btnUpdateMatch_Click()
     const data = {"id": parseInt(tbMatchId.value), "score1": parseInt(tbScore1.value), "score2": parseInt(tbScore2.value)}
     console.log(data);
     const response = await post_api("set-match-score", data);
+    const response2 = await post_api("update-points", {}, false);
 
     window.location.reload();
 }
