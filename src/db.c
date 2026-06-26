@@ -12,12 +12,13 @@
 
 //****** game tables ******
 
-DB_RESULT db_set_match_score(Database db, int id, int score1, int score2) {
+DB_RESULT db_set_match_score(Database db, int id, int score1, int score2, int winner) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "INSERT OR REPLACE INTO played_matches (match_id, score1, score2) VALUES (?, ?, ?);", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "INSERT OR REPLACE INTO played_matches (match_id, score1, score2, winner) VALUES (?, ?, ?, ?);", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, id);
 	sqlite3_bind_int(s, 2, score1);
 	sqlite3_bind_int(s, 3, score2);
+	sqlite3_bind_int(s, 4, winner);
 	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
 	sqlite3_finalize(s);
 	return DB_DONE;
@@ -120,7 +121,8 @@ DB_RESULT db_create_game_tables(Database db) {
 		"user_id INTEGER,"
 		"match_id INTEGER,"
 		"prediction1 INTEGER,"
-		"prediction2 INTEGER"
+		"prediction2 INTEGER,"
+		"predicted_winner INTEGER"
 		");";
 	
 	char* err_msg = NULL;
@@ -136,7 +138,8 @@ DB_RESULT db_create_game_tables(Database db) {
 		"CREATE TABLE IF NOT EXISTS played_matches ("
 		"match_id INTEGER PRIMARY KEY,"
 		"score1 INTEGER,"
-		"score2 INTEGER"
+		"score2 INTEGER,"
+		"winner INTEGER"
 		");";
 	
 
@@ -198,26 +201,28 @@ DB_RESULT db_get_match(Database db, int id, char* out_time, char* out_team1, cha
 	return DB_ERROR;
 }
 
-DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pred2) {
+DB_RESULT db_get_bet(Database db, int match_id, int user_id, int* pred1, int* pred2, int* predWinner) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT prediction1, prediction2 FROM bets WHERE match_id = ? AND user_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT prediction1, prediction2, predicted_winner FROM bets WHERE match_id = ? AND user_id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	sqlite3_bind_int(s, 2, user_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*pred1 = sqlite3_column_int(s, 0);
 		*pred2 = sqlite3_column_int(s, 1);
+		if(predWinner != NULL) *predWinner = sqlite3_column_int(s, 2);
 		return DB_DONE;
 	}
 	return DB_NO_RESULT;
 }
 
-DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2) {
+DB_RESULT db_get_match_score(Database db, int match_id, int* score1, int* score2, int* winner) {
 	sqlite3_stmt* s;
-	sqlite3_prepare_v2(db.db, "SELECT score1, score2 FROM played_matches WHERE match_id = ?;", -1, &s, NULL);
+	sqlite3_prepare_v2(db.db, "SELECT score1, score2, winner FROM played_matches WHERE match_id = ?;", -1, &s, NULL);
 	sqlite3_bind_int(s, 1, match_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*score1 = sqlite3_column_int(s, 0);
 		*score2 = sqlite3_column_int(s, 1);
+		if(winner != NULL) *winner = sqlite3_column_int(s, 2);
 		return DB_DONE;
 	}
 	return DB_NO_RESULT;
@@ -234,22 +239,24 @@ DB_RESULT db_get_time(Database db, int match_id, char* out_time) {
 
 }
 
-DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pred2) {
+DB_RESULT db_place_bet(Database db, int match_id, int user_id, int pred1, int pred2, int predWinner) {
 	sqlite3_stmt* s1;
+	//Check if a bet has already been placed (aka entry exists)
 	sqlite3_prepare_v2(db.db, "SELECT * FROM bets WHERE match_id = ? AND user_id = ?;", -1, &s1, NULL);
 	sqlite3_bind_int(s1, 1, match_id);
 	sqlite3_bind_int(s1, 2, user_id);
 
 	sqlite3_stmt* s2;
-	if(sqlite3_step(s1) == SQLITE_ROW) {
-		sqlite3_prepare_v2(db.db, "UPDATE bets SET prediction1 = ?, prediction2 = ? WHERE match_id = ? AND user_id = ?;", -1, &s2, NULL);
-	} else {
-		sqlite3_prepare_v2(db.db, "INSERT INTO bets (prediction1, prediction2, match_id, user_id) VALUES (?, ?, ?, ?);", -1, &s2, NULL);
+	if(sqlite3_step(s1) == SQLITE_ROW) { //Update existing prediction
+		sqlite3_prepare_v2(db.db, "UPDATE bets SET prediction1 = ?, prediction2 = ?, predicted_winner = ? WHERE match_id = ? AND user_id = ?;", -1, &s2, NULL);
+	} else { //Place new prediction
+		sqlite3_prepare_v2(db.db, "INSERT INTO bets (prediction1, prediction2, predicted_winner, match_id, user_id) VALUES (?, ?, ?, ?, ?);", -1, &s2, NULL);
 	}
 	sqlite3_bind_int(s2, 1, pred1);
 	sqlite3_bind_int(s2, 2, pred2);
-	sqlite3_bind_int(s2, 3, match_id);
-	sqlite3_bind_int(s2, 4, user_id);
+	sqlite3_bind_int(s2, 3, predWinner);
+	sqlite3_bind_int(s2, 4, match_id);
+	sqlite3_bind_int(s2, 5, user_id);
 	if(sqlite3_step(s2) != SQLITE_DONE) return DB_ERROR;
 	sqlite3_finalize(s1);
 	sqlite3_finalize(s2);

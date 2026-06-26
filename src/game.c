@@ -11,14 +11,17 @@
 
 
 
-cJSON* get_match_list(int user_id, Database db) {
+cJSON* get_match_list(int user_id, int from_id, int to_id, Database db) {
 	int ids[256];
 	int id_count = 0;
 	db_get_match_ids(db, ids, &id_count);
 	
+	if(from_id < 1) from_id = 1; //Makes sure the from_id is not smaller than allowed
+	if(id_count < to_id) to_id = id_count; //Makes sure the to_id is not greater than the max possible ids
+
 	cJSON* list = cJSON_CreateArray();
 
-	for(int i = 0; i < id_count; i++) {
+	for(int i = from_id - 1; i < to_id; i++) {
 		char time[128];
 		char team1[128];
 		char team2[128];
@@ -31,15 +34,17 @@ cJSON* get_match_list(int user_id, Database db) {
 		cJSON_AddStringToObject(match, "team1", team1);
 		cJSON_AddStringToObject(match, "team2", team2);
 
-		int pred1 = 0, pred2 = 0;
-		db_get_bet(db, ids[i], user_id, &pred1, &pred2); 
+		int pred1 = 0, pred2 = 0, predWinner = 0;
+		db_get_bet(db, ids[i], user_id, &pred1, &pred2, &predWinner); 
 		cJSON_AddNumberToObject(match, "prediction1", pred1);
 		cJSON_AddNumberToObject(match, "prediction2", pred2);
+		cJSON_AddNumberToObject(match, "predicted_winner", predWinner);
 
-		int score1 = -1, score2 = -1;
-		db_get_match_score(db, ids[i], &score1, &score2);
+		int score1 = -1, score2 = -1, winner = -1;
+		db_get_match_score(db, ids[i], &score1, &score2, &winner);
 		cJSON_AddNumberToObject(match, "score1", score1);
 		cJSON_AddNumberToObject(match, "score2", score2);
+		cJSON_AddNumberToObject(match, "winner", winner);
 
 		cJSON_AddItemToArray(list, match);
 	}
@@ -200,11 +205,11 @@ void update_points(Database db)
 			int p1 = 0, p2 = 0;
 			int s1 = -1, s2 = -1;	
 				
-			db_get_match_score(db, ids[j], &s1, &s2);
+			db_get_match_score(db, ids[j], &s1, &s2, NULL);
 
 			if(s1 == -1 || s2 == -1) continue; //Skip matches that aren't finished
 
-			db_get_bet(db, ids[j], user_id, &p1, &p2);		
+			db_get_bet(db, ids[j], user_id, &p1, &p2, NULL);		
 			points += calc_score(p1, p2, s1, s2);
 
 		}

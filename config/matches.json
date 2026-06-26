@@ -431,6 +431,24 @@
       "time": "2026-06-28 04:00:00",
       "team1": "Algerien",
       "team2": "Österreich"
+    },
+    {
+      "group": "",
+      "time": "2026-06-28 21:00:00",
+      "team1": "Südafrika",
+      "team2": "Kanada"
+    },
+    {
+      "group": "",
+      "time": "2026-06-29 19:00:00",
+      "team1": "Brasilien",
+      "team2": "Japan"
+    },
+    {
+      "group": "",
+      "time": "2026-06-30 03:00:00",
+      "team1": "Niederlande",
+      "team2": "Marokko"
     }
   ]
 }

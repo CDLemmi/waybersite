@@ -125,7 +125,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_AddNumberToObject(json, "points", points);
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
-		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, db));
+		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, 1, 72, db));
 		char* s = cJSON_Print(json);
 		return s;
 	} else if(!strcmp(api_endpoint, "place-bet")) {
@@ -133,7 +133,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int pred1 = cJSON_GetObjectItem(request_body, "prediction1")->valueint;
 		int pred2 = cJSON_GetObjectItem(request_body, "prediction2")->valueint;
 		if(match_hasnt_started(match_id, db)) {
-			db_place_bet(db, match_id, user.id, pred1, pred2);
+			db_place_bet(db, match_id, user.id, pred1, pred2, 0);
 		} else {
 			*error = 2;
 		}
@@ -205,7 +205,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		//Check if match is concluded and get match score and name
 		int score1 = -1;
 		int score2 = -1;
-		db_get_match_score(db, match_id, &score1, &score2);
+		db_get_match_score(db, match_id, &score1, &score2, NULL);
 		char t[128];
 		char team1[128];
 		char team2[128];
@@ -238,7 +238,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 
 			int pred1 = 0;
 			int pred2 = 0;
-			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2);
+			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2, NULL);
 
 			char name[128];
 			char hash[HASH_SIZE];
@@ -255,7 +255,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* s = cJSON_Print(json);
 		return s;
 	}
-	else if(!strcmp(api_endpoint, "set-match-score")) {
+	else if(!strcmp(api_endpoint, "set-match-score")) 
+	{
 		if(user.admin == 0) {
 			*error = 2;
 			return NULL;
@@ -263,8 +264,46 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int id = cJSON_GetObjectItem(request_body, "id")->valueint;
 		int score1 = cJSON_GetObjectItem(request_body, "score1")->valueint;
 		int score2 = cJSON_GetObjectItem(request_body, "score2")->valueint;
-		db_set_match_score(db, id, score1, score2);
-	} else {
+		db_set_match_score(db, id, score1, score2, 0);
+	}
+	else if(!strcmp(api_endpoint, "set-match-score-playoffs")) 
+	{
+		if(user.admin == 0) {
+			*error = 2;
+			return NULL;
+		}
+		int id = cJSON_GetObjectItem(request_body, "id")->valueint;
+		int score1 = cJSON_GetObjectItem(request_body, "score1")->valueint;
+		int score2 = cJSON_GetObjectItem(request_body, "score2")->valueint;
+		int winner = cJSON_GetObjectItem(request_body, "winner")->valueint;
+		db_set_match_score(db, id, score1, score2, winner);
+	}
+	else if(!strcmp(api_endpoint, "place-bet-playoffs"))
+	{
+		int match_id = cJSON_GetObjectItem(request_body, "id")->valueint;
+		int pred1 = cJSON_GetObjectItem(request_body, "prediction1")->valueint;
+		int pred2 = cJSON_GetObjectItem(request_body, "prediction2")->valueint;
+		int predWinner = cJSON_GetObjectItem(request_body, "predicted_winner")->valueint;
+		if(match_hasnt_started(match_id, db)) {
+			db_place_bet(db, match_id, user.id, pred1, pred2, predWinner);
+		} else {
+			*error = 2;
+		}
+	}
+	else if(!strcmp(api_endpoint, "playoffs-page")) 
+	{
+		cJSON* json = cJSON_CreateObject();
+		int points;
+		db_get_points_user(db, user.id, &points);
+		cJSON_AddNumberToObject(json, "points", points);
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
+		cJSON_AddItemToObject(json, "matches", get_match_list(user.id, 73, 1000, db));
+		char* s = cJSON_Print(json);
+		return s;
+	} 
+	else 
+	{
 		*error = 1;
 		char* errMes = calloc(2048,1);
 		strcpy(errMes, "{\"errorMes\": \"Unused API endpoint\"}");
