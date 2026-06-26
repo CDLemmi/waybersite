@@ -3,3 +3,4 @@ build/
 database.db
 .vscode/
 web/legal.json
+web/news.txt
