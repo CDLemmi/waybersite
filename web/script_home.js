@@ -2,6 +2,7 @@ let divMatches = document.getElementById("divMatches");
 let tplMatch = document.getElementById("tplMatch");
 let tblUserHeader = document.getElementById("tblUserHeader");
 let tblLinkAdmin = document.getElementById("tblLinkAdmin");
+let taNews = document.getElementById("taNews");
 
 let days = [];
 let isAdmin;
@@ -37,6 +38,10 @@ async function onLoad()
 
         //Scroll to the current day
         scrollTo({top: scroll});
+
+        //Load current news
+        const newsResponse = await fetch("/news.txt");
+        taNews.textContent = await newsResponse.text();
     };
 }
 

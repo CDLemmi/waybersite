@@ -21,7 +21,7 @@ table, th, td
     padding: 10px 10px 10px 10px
 }
 
-input[type=text], input[type=password]
+input[type=text], input[type=password], textarea
 {
     background-color: rgb(103, 56, 103);
     color: white;

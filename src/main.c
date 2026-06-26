@@ -416,8 +416,10 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			strcpy(response.content_type, "text/html; charset=utf-8");
 		} else if(!strcmp(ext, "css")) {
 			strcpy(response.content_type, "text/css");
+		} else if(!strcmp(ext, "txt")) {
+			strcpy(response.content_type, "text/txt");
 		} else if(!strcmp(ext, "js")) {
-			strcpy(response.content_type, "application/javasript");
+			strcpy(response.content_type, "application/javascript");
 		} else if(!strcmp(ext, "jpg")) {
 			strcpy(response.content_type, "image/jpeg");
 		} else if(!strcmp(ext, "json")) {
