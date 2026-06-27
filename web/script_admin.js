@@ -9,6 +9,7 @@ let tbScore2 = document.getElementById("tbScore2");
 let tbMatchId = document.getElementById("tbMatchId");
 let btnUpdateMatch = document.getElementById("btnUpdateMatch");
 let btnUpdatePoints = document.getElementById("btnUpdatePoints");
+let tbWinner = document.getElementById("tbWinner");
 
 onLoad();
 
@@ -192,21 +193,21 @@ async function btnDeleteUser_Click(event)
 
 async function btnUpdateMatch_Click()
 {
-    if(tbMatchId.value === "" || tbScore1.value === "" || tbScore2.value === "")
+    if(tbMatchId.value === "" || tbScore1.value === "" || tbScore2.value === "" || tbWinner.value === "")
     {
         alert("Bitte fülle alle erforderlichen Felder für das Aktualisieren eines Matches aus");
         return;
     }
 
-    const data = {"id": parseInt(tbMatchId.value), "score1": parseInt(tbScore1.value), "score2": parseInt(tbScore2.value)}
+    const data = {"id": parseInt(tbMatchId.value), "score1": parseInt(tbScore1.value), "score2": parseInt(tbScore2.value), "winner": parseInt(tbWinner.value)};
 
-    const response = await post_api("set-match-score", data);
-    const response2 = await post_api("update-points", {}, false);
+    await post_api("set-match-score", data);
+    await post_api("update-points", {}, false);
 
     window.location.reload();
 }
 
 async function btnUpdatePoints_Click()
 {
-    const response = await post_api("update-points", {});
+    await post_api("update-points", {});
 }

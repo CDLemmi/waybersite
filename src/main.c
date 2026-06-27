@@ -205,7 +205,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		//Check if match is concluded and get match score and name
 		int score1 = -1;
 		int score2 = -1;
-		db_get_match_score(db, match_id, &score1, &score2, NULL);
+		int winner = 0;
+		db_get_match_score(db, match_id, &score1, &score2, &winner);
 		char t[128];
 		char team1[128];
 		char team2[128];
@@ -220,9 +221,9 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		{
 			cJSON_AddNumberToObject(json, "score1", score1);
 			cJSON_AddNumberToObject(json, "score2", score2);
+			cJSON_AddNumberToObject(json, "winner", winner);
 			cJSON_AddItemToObject(json, "team1", cJSON_CreateString(team1));
 			cJSON_AddItemToObject(json, "team2", cJSON_CreateString(team2));
-			printf("guten");
 		}
 
 		//Add array with all user predictions
@@ -264,7 +265,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		int id = cJSON_GetObjectItem(request_body, "id")->valueint;
 		int score1 = cJSON_GetObjectItem(request_body, "score1")->valueint;
 		int score2 = cJSON_GetObjectItem(request_body, "score2")->valueint;
-		db_set_match_score(db, id, score1, score2, 0);
+		int winner = cJSON_GetObjectItem(request_body, "winner")->valueint;
+		db_set_match_score(db, id, score1, score2, winner);
 	}
 	else if(!strcmp(api_endpoint, "set-match-score-playoffs")) 
 	{

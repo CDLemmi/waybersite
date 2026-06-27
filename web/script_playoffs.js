@@ -141,6 +141,11 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         div.querySelector("#btnPred2Down").style.visibility = "hidden";
         div.querySelector(`#cbxWinner_${id}`).disabled = true;
 
+        //Add link to page that shows other players predictions
+        div.querySelector("#divMatch").addEventListener("click", () => window.location.assign(`/match_predictions.html?match_id=${id}`));
+        div.querySelector("#divMatch").style.cursor="pointer";
+
+
         if((score1 != -1 && score2 != -1))
         {
             const tblPoints = div.querySelector("#tblPoints");

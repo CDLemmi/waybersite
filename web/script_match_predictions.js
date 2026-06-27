@@ -2,6 +2,7 @@ let tabPredictions = document.getElementById("tabPredictions");
 let tblContentHeader = document.getElementById("tblContentHeader");
 let tblContentDesc = document.getElementById("tblContentDesc");
 
+let match_id = 0;
 let score1 = 0;
 let score2 = 0;
 
@@ -12,7 +13,9 @@ async function onLoad()
     const queryString = window.location.search;  
     const urlParams = new URLSearchParams(queryString);  
 
-    const data = {match_id: parseInt(urlParams.get("match_id"))};
+    match_id = parseInt(urlParams.get("match_id"));
+
+    const data = {match_id: match_id};
 
     const response = await post_api("match-preds-page", data, false);
     if(response.status === 401)
@@ -42,6 +45,9 @@ async function onLoad()
         {
             //If the match has already concluded, also show score
             tblContentHeader.textContent += ` (${data.score1} : ${data.score2})`
+
+            //If the match is a playoffs match, also show winner
+            if(match_id >= 73) tblContentHeader.textContent += data.winner === 0 ? ` (Gewinner: ${data.team1})` : ` (Gewinner: ${data.team2})` 
         } 
 
         //Predictions
