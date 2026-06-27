@@ -168,13 +168,3 @@ async function btnSavePred_Click(event)
 
     if(response.status === "200") btnSavePred.style.visibility = "visible";
 }
-
-function isCurrentDay(dateTime)
-{
-    const dateTimeObj = new Date(dateTime);
-    const currentDate = new Date(Date.now());
-
-    return (currentDate.getDate() == dateTimeObj.getDate()
-        && currentDate.getMonth() == dateTimeObj.getMonth()
-        && currentDate.getFullYear() == dateTimeObj.getFullYear());
-}

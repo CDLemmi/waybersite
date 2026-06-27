@@ -227,3 +227,13 @@ function hasMatchStarted(dateTime)
 
     return timeDiff < 0;
 }
+
+function isCurrentDay(dateTime)
+{
+    const dateTimeObj = new Date(dateTime);
+    const currentDate = new Date(Date.now());
+
+    return (currentDate.getDate() == dateTimeObj.getDate()
+        && currentDate.getMonth() == dateTimeObj.getMonth()
+        && currentDate.getFullYear() == dateTimeObj.getFullYear());
+}

@@ -5,11 +5,14 @@ let tblLinkAdmin = document.getElementById("tblLinkAdmin");
 
 let days = [];
 let isAdmin;
+let scroll = 0;
 
 onLoad();
 
 async function onLoad()
 {
+    btnUp.addEventListener("click", () => window.scrollTo({top: 0}));
+
     const response = await fetch("/api/playoffs-page");
     if(response.status === 401)
     {
@@ -25,11 +28,15 @@ async function onLoad()
        
         tblUserHeader.textContent = data.username;
         isAdmin = data.admin;
+        tblPoints.textContent = `${data.points} Punkte`;
         if(isAdmin == true) tblLinkAdmin.style.visibility = "visible";
 
         data.matches.forEach(e => {
             addMatch(e.id, e.group, e.time, e.team1, e.team2, e.prediction1, e.prediction2, e.score1, e.score2, e.predicted_winner, e.winner);
         });
+
+        //Scroll to the current day
+        scrollTo({top: scroll});
     };
 }
 
@@ -48,6 +55,12 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         tblDay.classList="font_large";
         divMatches.appendChild(tblDay);
         days.push(day);
+
+        if(isCurrentDay(dateTime))
+        {
+            //Save scroll offset for when the page is done loading
+            scroll = tblDay.getBoundingClientRect().top - 20;
+        }
     }
 
     const div = tplMatch.content.cloneNode(true);
