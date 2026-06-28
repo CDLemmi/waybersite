@@ -446,7 +446,7 @@
     },
         {
       "group": "",
-      "time": "2026-06-29 19:00:00",
+      "time": "2026-06-29 22:30:00",
       "team1": "Deutschland",
       "team2": "Paraguay"
     },
@@ -491,6 +491,42 @@
       "time": "2026-07-02 02:00:00",
       "team1": "USA",
       "team2": "Bosnien-Herzegowina"
+    },
+    {
+      "group": "",
+      "time": "2026-07-02 21:00:00",
+      "team1": "Spanien",
+      "team2": "Österreich"
+    },
+    {
+      "group": "",
+      "time": "2026-07-03 01:00:00",
+      "team1": "Portugal",
+      "team2": "Kroatien"
+    },    
+    {
+      "group": "",
+      "time": "2026-07-03 05:00:00",
+      "team1": "Schweiz",
+      "team2": "Algerien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-03 20:00:00",
+      "team1": "Australien",
+      "team2": "Ägypten"
+    },
+    {
+      "group": "",
+      "time": "2026-07-04 00:00:00",
+      "team1": "Argentinien",
+      "team2": "Kap Verde"
+    },
+    {
+      "group": "",
+      "time": "2026-07-04 03:30:00",
+      "team1": "Kolumbien",
+      "team2": "Ghana"
     }
   ]
 }
