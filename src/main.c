@@ -239,7 +239,8 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 
 			int pred1 = 0;
 			int pred2 = 0;
-			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2, NULL);
+			int predWin = -1;
+			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2, &predWin);
 
 			char name[128];
 			char hash[HASH_SIZE];
@@ -249,6 +250,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 			cJSON_AddItemToObject(entry, "user", cJSON_CreateString(name));
 			cJSON_AddNumberToObject(entry, "pred1", pred1);
 			cJSON_AddNumberToObject(entry, "pred2", pred2);
+			cJSON_AddNumberToObject(entry, "predWin", predWin);
 
 			cJSON_AddItemToArray(array, entry);
 		}
