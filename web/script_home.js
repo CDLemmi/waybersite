@@ -144,7 +144,7 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         {
             const tblPoints = div.querySelector("#tblPoints");
             tblPoints.style.visibility = "visible";
-            tblPoints.textContent = `+ ${calcPoints(pred1, pred2, score1, score2)} Punkte`;
+            tblPoints.textContent = `+ ${calcPoints(id, pred1, pred2, score1, score2, -1, -1)} Punkte`;
         }
     }
 

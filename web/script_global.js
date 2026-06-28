@@ -205,9 +205,19 @@ function scheduleHideUserbox()
     }, 100);
 }
 
-function calcPoints(pred1, pred2, score1, score2)
+function calcPoints(match_id, pred1, pred2, score1, score2, predWin, finalWin)
 {
     let points = 0;
+    let predScoreWinner = -1; //Predicted winner as indicated by predicted score, may differ from predWin
+
+    if(pred1 > pred2)
+    {
+        predScoreWinner = 0;
+    }
+    else if(pred1 < pred2)
+    {
+        predScoreWinner = 1;
+    }
 
     if(pred1 > pred2 && score1 > score2 //2 points for guessing the right winner
         || pred1 < pred2 && score1 < score2
@@ -216,6 +226,19 @@ function calcPoints(pred1, pred2, score1, score2)
     if((pred1 - pred2 === score1 - score2) && (score1 != score2)) points = 3; //3 points for the correct goal diff (except when tie)
 
     if(pred1 === score1 && pred2 === score2) points = 4; //4 points for the correct match score
+
+    if(match_id >= 73)
+    {
+        if(predWin === finalWin && predScoreWinner === predWin //2 points for having guessed the same on predWin and score, or when predicting tie on score and correct winner
+            || predWin === finalWin && predScoreWinner === -1) 
+        {
+            points += 2;
+            return points;
+        }
+
+        if(predWin === finalWin && predScoreWinner !== predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
+
+    }
 
     return points;
 }

@@ -202,15 +202,15 @@ void update_points(Database db)
 
 		for(int j = 0; j < id_count; j++)
 		{
-			int p1 = 0, p2 = 0;
-			int s1 = -1, s2 = -1;	
+			int p1 = 0, p2 = 0, pw = -1;
+			int s1 = -1, s2 = -1, sw = -1;	
 				
-			db_get_match_score(db, ids[j], &s1, &s2, NULL);
+			db_get_match_score(db, ids[j], &s1, &s2, &sw);
 
 			if(s1 == -1 || s2 == -1) continue; //Skip matches that aren't finished
 
-			db_get_bet(db, ids[j], user_id, &p1, &p2, NULL);		
-			points += calc_score(p1, p2, s1, s2);
+			db_get_bet(db, ids[j], user_id, &p1, &p2, &pw);		
+			points += calc_score(ids[j], p1, p2, s1, s2, pw, sw);
 
 		}
 			
@@ -218,9 +218,20 @@ void update_points(Database db)
 	}
 }
 
-int calc_score(int pred1, int pred2, int score1, int score2)
+int calc_score(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin)
 {
 	int points = 0;
+	int predScoreWinner = -1; //Predicted winner as indicated by predicted score, may differ from predWin
+
+	//Calculate who was predicted to win based on score
+    if(pred1 > pred2)
+    {
+        predScoreWinner = 0;
+    }
+    else if(pred1 < pred2)
+    {
+        predScoreWinner = 1;
+    }
 
 	if((pred1 > pred2 && score1 > score2) //2 points for guessing the right winner
         || (pred1 < pred2 && score1 < score2)
@@ -230,7 +241,17 @@ int calc_score(int pred1, int pred2, int score1, int score2)
 
     if(pred1 == score1 && pred2 == score2) points = 4; //4 points for the correct match score
 
-	printf("%d, %d, %d, %d, %d\n", pred1, pred2, score1, score2, points);
+	//Additional calculations if match is playoff match
+	if(match_id >= 73)
+	{
+    	if((predWin == finalWin && predScoreWinner == predWin) //2 points for having guessed the same on predWin and score, or when predicting tie on score and correct winner
+        	|| (predWin == finalWin && predScoreWinner == -1)) 
+			{
+				points += 2;
+				return points;
+			}
 
+		if(predWin == finalWin && predScoreWinner != predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
+	}
     return points;
 }
