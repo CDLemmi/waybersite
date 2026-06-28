@@ -434,7 +434,7 @@
     },
     {
       "group": "",
-      "time": "2026-06-27 21:00:00",
+      "time": "2026-06-28 21:00:00",
       "team1": "Südafrika",
       "team2": "Kanada"
     },
@@ -444,6 +444,12 @@
       "team1": "Brasilien",
       "team2": "Japan"
     },
+        {
+      "group": "",
+      "time": "2026-06-29 19:00:00",
+      "team1": "Deutschland",
+      "team2": "Paraguay"
+    },
     {
       "group": "",
       "time": "2026-06-30 03:00:00",
@@ -452,9 +458,39 @@
     },
     {
       "group": "",
-      "time": "2026-06-26 03:00:00",
-      "team1": "Niederlande",
-      "team2": "Marokko"
+      "time": "2026-06-30 19:00:00",
+      "team1": "Elfenbeinküste",
+      "team2": "Norwegen"
+    },
+    {
+      "group": "",
+      "time": "2026-06-30 23:00:00",
+      "team1": "Frankreich",
+      "team2": "Schweden"
+    },
+    {
+      "group": "",
+      "time": "2026-07-01 03:00:00",
+      "team1": "Mexiko",
+      "team2": "Ecuador"
+    },
+    {
+      "group": "",
+      "time": "2026-07-01 18:00:00",
+      "team1": "England",
+      "team2": "DR Kongo"
+    },
+    {
+      "group": "",
+      "time": "2026-07-01 22:00:00",
+      "team1": "Belgien",
+      "team2": "Senegal"
+    },
+    {
+      "group": "",
+      "time": "2026-07-02 02:00:00",
+      "team1": "USA",
+      "team2": "Bosnien-Herzegowina"
     }
   ]
 }
