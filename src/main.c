@@ -239,7 +239,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 
 			int pred1 = 0;
 			int pred2 = 0;
-			int predWin = -1;
+			int predWin = 0;
 			db_get_bet(db, match_id, user_ids[i], &pred1, &pred2, &predWin);
 
 			char name[128];

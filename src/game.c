@@ -202,7 +202,7 @@ void update_points(Database db)
 
 		for(int j = 0; j < id_count; j++)
 		{
-			int p1 = 0, p2 = 0, pw = -1;
+			int p1 = 0, p2 = 0, pw = 0;
 			int s1 = -1, s2 = -1, sw = -1;	
 				
 			db_get_match_score(db, ids[j], &s1, &s2, &sw);
