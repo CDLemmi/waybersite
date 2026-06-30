@@ -48,7 +48,7 @@ DB_RESULT db_create_config_tables(Database db) {
 	char* s1 = "DROP TABLE IF EXISTS matches;";
 	rc = sqlite3_exec(db.db, s1, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q2): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q1): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -64,7 +64,7 @@ DB_RESULT db_create_config_tables(Database db) {
 		");";
 	rc = sqlite3_exec(db.db, s2, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q3): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q2): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -72,7 +72,7 @@ DB_RESULT db_create_config_tables(Database db) {
 	char* s4 = "DROP TABLE IF EXISTS groups;";
 	rc = sqlite3_exec(db.db, s4, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q2): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q4): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -85,7 +85,29 @@ DB_RESULT db_create_config_tables(Database db) {
 		");";
 	rc = sqlite3_exec(db.db, s3, NULL, NULL, &err_msg);
 	if(rc != SQLITE_OK) {
-		fprintf(stderr, "[ERROR] sql (q4): %s\n", err_msg);
+		fprintf(stderr, "[ERROR] sql (q3): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+	char* s5 = "DROP TABLE IF EXISTS group_results;";
+	rc = sqlite3_exec(db.db, s5, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q5): %s\n", err_msg);
+		sqlite3_free(err_msg);
+		exit(1);
+	}
+
+	char* s6 = 
+		"CREATE TABLE group_results ("
+		"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+		"`group` TEXT NOT NULL,"
+		"team TEXT NOT NULL UNIQUE,"
+		"position INTEGER"
+		");";
+	rc = sqlite3_exec(db.db, s6, NULL, NULL, &err_msg);
+	if(rc != SQLITE_OK) {
+		fprintf(stderr, "[ERROR] sql (q6): %s\n", err_msg);
 		sqlite3_free(err_msg);
 		exit(1);
 	}
@@ -113,6 +135,62 @@ DB_RESULT db_create_team(Database db, char* group, char* team) {
 	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
 	sqlite3_finalize(s);
 	return DB_DONE;
+}
+
+DB_RESULT db_create_group_result(Database db, char* group, char* team, int position)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "INSERT INTO group_results (`group`, team, position) VALUES (?, ?, ?)", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, group, -1, SQLITE_STATIC);
+	sqlite3_bind_text(s, 2, team, -1, SQLITE_STATIC);
+	sqlite3_bind_int(s, 3, position);
+
+	if(sqlite3_step(s) != SQLITE_DONE) return DB_ERROR;
+	sqlite3_finalize(s);
+
+	return DB_DONE;
+}
+
+DB_RESULT db_get_group_result(Database db, char* in_team, int* out_position)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT position FROM group_results WHERE team = ?", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, in_team, -1, SQLITE_STATIC);
+
+	if(sqlite3_step(s) == SQLITE_ROW) 
+	{
+		*out_position = sqlite3_column_int(s, 0);
+	}
+	else
+	{
+		return DB_ERROR;
+	}
+
+	return DB_DONE;
+}
+
+DB_RESULT db_get_teams(Database db, char** teams)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT team FROM groups GROUP BY team", -1, &s, NULL);
+
+	for(int i = 0; 1; i++)
+	{
+		int result = sqlite3_step(s);
+		if(result == SQLITE_ROW)
+		{
+			char* team = sqlite3_column_text(s, 0);
+			teams[i] = strdup((char*)team);
+		}
+		else if(result == SQLITE_DONE)
+		{
+			return DB_DONE;
+		}
+		else
+		{
+			return DB_ERROR;
+		}
+	}
 }
 
 DB_RESULT db_create_game_tables(Database db) {

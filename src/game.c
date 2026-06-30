@@ -73,7 +73,7 @@ cJSON* get_groups(int user_id, Database db) {
 		for(int j = 0; j < 4; j++) {
 			cJSON* team_json = cJSON_CreateObject();
 			cJSON_AddStringToObject(team_json, "team", team);
-			int pred = -1; 
+			int pred = -1;
 			db_get_group_bet(db, user_id, team, &pred);
 			cJSON_AddNumberToObject(team_json, "prediction", pred);
 			cJSON_AddItemToArray(teams_json, team_json);
@@ -153,6 +153,38 @@ int parse_config(Database db) {
 	cJSON_Delete(json);
 
 
+	//Parse group results
+	file = fopen("config/group_results.json", "r");
+	
+	fseek(file, 0, SEEK_END);
+
+	fsize = ftell(file);
+	fseek(file, 0, SEEK_SET);  /* same as rewind(f); */
+
+	content = (char*)malloc(fsize + 1);
+	fread(content, fsize, 1, file);
+	fclose(file);
+
+	content[fsize] = 0;
+
+	json = cJSON_Parse(content);
+	groups_json = cJSON_GetObjectItem(json, "groups");
+	cJSON_ArrayForEach(group_json, groups_json) 
+	{
+		char* group = cJSON_GetObjectItem(group_json, "name")->valuestring;
+		cJSON* teams_json = cJSON_GetObjectItem(group_json, "teams");
+		cJSON* team_json;
+		int i = 1;
+		cJSON_ArrayForEach(team_json, teams_json) 
+		{
+			db_create_group_result(db, group, team_json->valuestring, i);
+			i++;
+		}
+	}
+
+	free(content);
+	cJSON_Delete(json);
+
 	return 0;
 }
 
@@ -185,7 +217,7 @@ int match_hasnt_started(int match_id, Database db) {
 
 void update_points(Database db)
 {
-	//Get all match ids before updating users
+	//Get all match ids, user ids and groups before updating users
 	int ids[256];
 	int id_count = 0;
 	db_get_match_ids(db, ids, &id_count);
@@ -194,12 +226,16 @@ void update_points(Database db)
 	int user_count = 0;
 	db_get_user_list(db, users, &user_count);
 
+	char* teams[48];
+	db_get_teams(db, teams);
+
 	//Update the scores for every user
 	for(int i = 0; i < user_count; i++)
 	{
 		int user_id = users[i];
 		int points = 0;
 
+		//Add points from match guesses
 		for(int j = 0; j < id_count; j++)
 		{
 			int p1 = 0, p2 = 0, pw = 0;
@@ -210,15 +246,30 @@ void update_points(Database db)
 			if(s1 == -1 || s2 == -1) continue; //Skip matches that aren't finished
 
 			db_get_bet(db, ids[j], user_id, &p1, &p2, &pw);		
-			points += calc_score(ids[j], p1, p2, s1, s2, pw, sw);
+			points += calc_points_match(ids[j], p1, p2, s1, s2, pw, sw);
 
 		}
+		
+		//Add points from group guesses
+		for(int k = 0; k < 48; k++)
+		{
+			char* team = teams[k];
+			int pred = 0, result = -1;
+
+			db_get_group_bet(db, user_id, team, &pred);
+			db_get_group_result(db, team, &result);
 			
+			printf("Bet: %d - Result: %d", pred, result);	
+
+			if(pred == result) points += 2;
+		}
+
+
 		db_set_points(db, user_id, points);
 	}
 }
 
-int calc_score(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin)
+int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin)
 {
 	int points = 0;
 	int predScoreWinner = -1; //Predicted winner as indicated by predicted score, may differ from predWin

@@ -55,6 +55,12 @@ DB_RESULT db_get_points(Database db, int* user_ids, int* points, int* count);
 
 DB_RESULT db_get_points_user(Database db, int id, int* out_points);
 
+DB_RESULT db_create_group_result(Database db, char* group, char* team, int position);
+
+DB_RESULT db_get_teams(Database db, char** out_teams);
+
+DB_RESULT db_get_group_result(Database db, char* in_team, int* out_position);
+
 // user management
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);

@@ -18,7 +18,6 @@ cJSON* get_groups(int user_id, Database db);
 
 void update_points(Database db);
 
-int calc_score(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin);
-
+int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin);
 
 #endif
