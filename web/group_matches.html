@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="stylesheets.css">
 <script src="script_global.js" defer></script>
-<script src="script_playoffs.js" defer></script>
+<script src="script_group_matches.js" defer></script>
 <html>
     <head>
-        <title>Waybersite - Playoffs</title>
+        <title>Waybersite - Home</title>
     </head>   
     <body>
         <template id="tplMatch">
-            <div id="divMatch" class="box inline_column" style="width: 900px; height: 180px;">
+            <div id="divMatch" class="box inline_column" style="width: 900px; height: 150px;">
                 <div id="divTopRow" class="inline_row">
                     <p id="tblTime" class="font_large">{time}</p>
                     <p id="tblScore1" class="font_large font_bold" style="margin-left: 60px; color: aqua"></p>
@@ -29,10 +29,6 @@
                     <button id="btnSavePred" class="large_button" style="margin-top: 5px; margin-left: 100px; visibility: hidden;">Speichern</button>
                     <p id="tblPoints" class="font_medium font_bold" style="margin-top: 5px; margin-left: 200px; visibility: hidden;"></button>
                 </div>
-                <div id="divBelowBottomRow" class="inline_row" style="margin-top: -20px;">
-                    <p class="font_large">Voraussichtlicher Gewinner:</p>
-                    <select id="cbxWinner" style="width: 250px; height: 25px; margin-top: 5px; font-size: 16px;"></select>
-                </div>
             </div>
         </template>
         <div class="header">
@@ -44,19 +40,23 @@
                 <a class="font_large header_content" id="tblLinkLeaderboard" href="/leaderboard.html">Leaderboard</a>
                 <a class="font_large header_content" id="tblLinkAdmin" href="/admin.html">Admin-Dashboard</a>
                 <p class="font_large header_content header_right" style="margin-left: auto;" id="tblPoints"></p>                        
-                <p class="font_large header_content header_right" id="tblUserHeader"></p>          
+                <p class="font_large header_content header_right" id="tblUserHeader"></p>
             </div>
             <div id="seperator" style="margin-top: -25px;"></div>
         </div>
         <div class="content">
-            <p class="font_large">Matches (Playoffs)</p>
-            <p class="font_medium font_bold">Die letzte Runde der Spiele hat begonnen! Hier kannst du deine Vorhersagen für die Playoff-Matches der WM 2026 abgeben! Stelle sicher, dass du deinen Tipp abgibst, bevor das jeweilige Spiel beginnt! Vergiss nicht, jede Vorhersage zu speichern! Wichtig: Die Vorhersagen beeinhalten NICHT die nach der Verlängerung während dem Elfmeterschießen getroffenen Tore.
-            </p>
+            <p class="font_large">Matches (Gruppenphase)</p>
+            <p class="font_medium font_bold">Hier kannst du deine Vorhersagen für die Matches der WM 2026 abgeben! Stelle sicher, dass du deinen Tipp abgibst, bevor das jeweilige Spiel beginnt! Aktuell angezeigt werden alle Spiele der Gruppenphase. Vergiss nicht, jede Vorhersage zu speichern!</p>
             <div class="inline_row">
-                <div id="divMatches" class="inline_column"></div>       
+                <div id="divMatches" class="inline_column"></div>
+                <div style="margin-top: 15px; border-left: 6px solid gray; height: 830px; margin-left: 30px;"></div>      
+                <div class="inline_column" style="margin-left: 60px;">     
+                    <p class="font_large">Neuigkeiten</p>
+                    <textarea id="taNews" rows="40" cols="750" style="width: 750px; font-size: 16px" disabled></textarea> 
+                </div>
             </div>
+            <button id="btnUp" style="position: fixed; right: 20px; bottom: 120px; width: 50px; height: 50px; font-size: 36px;">▲</button>
         </div>
-        <button id="btnUp" style="position: fixed; right: 20px; bottom: 120px; width: 50px; height: 50px; font-size: 36px;">▲</button>
         <div class="footer">
             <div id="seperator"></div>
             <p> 2026 by Seeloewen Software - <a href="/impressum.html" style="text-decoration: underline;">Impressum</a> - <a href="/privacy.html" style="text-decoration: underline;">Datenschutzerklärung</a> - Flag Icons by https://flagpedia.net</p>          </div>
