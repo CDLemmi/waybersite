@@ -54,8 +54,6 @@ async function onLoad()
         const predictions = data.predictions;
         if(typeof predictions !== "undefined")
         {
-            console.log(predictions);
-
             predictions.forEach(element => {
                 addEntryToTable(element.username, element.pred1, element.pred2, element.pred3, element.pred4);
             });

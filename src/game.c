@@ -74,8 +74,18 @@ cJSON* get_groups(int user_id, Database db) {
 			cJSON* team_json = cJSON_CreateObject();
 			cJSON_AddStringToObject(team_json, "team", team);
 			int pred = -1;
-			db_get_group_bet(db, user_id, team, &pred);
-			cJSON_AddNumberToObject(team_json, "prediction", pred);
+
+			if(user_id == -1) //User id -1 means to get final results
+			{
+				db_get_group_result(db, team, &pred);
+				cJSON_AddNumberToObject(team_json, "result", pred);
+			}
+			else
+			{
+				db_get_group_bet(db, user_id, team, &pred);
+				cJSON_AddNumberToObject(team_json, "prediction", pred);
+			}
+
 			cJSON_AddItemToArray(teams_json, team_json);
 			team = team + strlen(team) + 1;
 		}
@@ -85,7 +95,6 @@ cJSON* get_groups(int user_id, Database db) {
 	
 	return json;
 }
-
 
 int parse_config(Database db) {
 	if(db_create_config_tables(db) != DB_DONE) {

@@ -29,7 +29,8 @@ class Group
 
 let divGroups = document.getElementById("divGroups");
 let tblLinkAdmin = document.getElementById("tblLinkAdmin");
-let groups = [];
+let groupGuesses = [];
+let groupResults = [];
 
 onLoad();
 
@@ -54,6 +55,17 @@ async function onLoad()
         tblUserHeader.textContent = data.username;
         if(data.admin == true) tblLinkAdmin.style.visibility = "visible";
 
+        //Get results to later compare with guesses
+        data.results.forEach(e => {
+            const teams = [];
+            e.teams.forEach(i => {
+                teams[i.result - 1] = i.team;
+            });
+
+            groupResults.push(new Group(e.group, teams[0], teams[1], teams[2], teams[3]));
+        });
+
+        //Go through group predictions and save them locally to display them
         data.groups.forEach(e => {
             const teams = [];
             const id = e.group;
@@ -98,18 +110,24 @@ function addGroup(id, team1, team2, team3, team4)
     if(lockGroup(id))
     {
         divGroup.querySelector("#btnSavePred").style.visibility = "hidden";
+
+        //Show received points
+        const tblPoints = divGroup.querySelector("#tblPoints");
+        tblPoints.textContent = `Punkte: ${calcPoints(g)}`;
+        tblPoints.style.visibility = "visible";
     }
 
-    groups.push(g);
+    groupGuesses.push(g);
     divGroups.appendChild(divGroup);
 }
 
 function createTeamDiv(divGroup, num, group, team)
 {
     const div = tplTeam.content.cloneNode(true);
+    const tblTeam = div.querySelector("#tblTeam");
 
     div.querySelector("#tblNumber").textContent = num;
-    div.querySelector("#tblTeam").textContent = team === "Bosnien-Herzegowina" ? "Bosnien-H." : team;
+    tblTeam.textContent = team === "Bosnien-Herzegowina" ? "Bosnien-H." : team;
     div.querySelector("#imgTeam").src = `https://flagcdn.com/${countryDict[team]}.svg`
 
     const btnSavePred = divGroup.querySelector("#btnSavePred");
@@ -120,6 +138,13 @@ function createTeamDiv(divGroup, num, group, team)
     {
         div.querySelector("#btnUp").style.visibility = "hidden";
         div.querySelector("#btnDown").style.visibility = "hidden";
+
+            //Show results
+        const res = getResult(team);
+        const tblResult = div.querySelector("#tblResult");
+        tblResult.textContent = res
+        tblResult.style.visibility = "visible";
+        tblTeam.style.color = res == num ? "green" : "red";
     }
 
     div.querySelector("#btnUp").addEventListener("click", () => {
@@ -153,7 +178,22 @@ function refreshDisplay(id)
 
 function getGroup(id)
 {
-    return groups.find(e => e.id === id);
+    return groupGuesses.find(e => e.id === id);
+}
+
+function getResult(team)
+{
+    //Go through all group results and get the position that a team finished in
+    for(const e of groupResults) 
+    {
+        for(i = 0; i < e.teams.length; i++)
+        {
+            if(e.teams[i] === team) 
+            {
+                return i + 1;
+            }
+        }
+    }
 }
 
 async function btnSavePred_Click(event)
@@ -210,4 +250,17 @@ function lockGroup(group)
         case "L":
             return currDate - new Date(2026, 5, 17, 22) > 0;
     }
+}
+
+function calcPoints(group)
+{
+    let points = 0;
+
+    for(i = 0; i < group.teams.length; i++)
+    {
+        const team = group.teams[i];
+        if(i + 1 == getResult(team)) points += 2;
+    }
+    
+    return points;
 }

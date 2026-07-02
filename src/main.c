@@ -139,6 +139,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		}
 	} else if(!strcmp(api_endpoint, "group-page")) {
 		cJSON* groups = get_groups(user.id, db);
+		cJSON* results = get_groups(-1, db);
 		cJSON* json = cJSON_CreateObject();
 		int points;
 		db_get_points_user(db, user.id, &points);
@@ -146,6 +147,7 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 		cJSON_AddItemToObject(json, "groups", groups);
+		cJSON_AddItemToObject(json, "results", results);
 		char* s = cJSON_Print(json);
 		cJSON_Delete(json);
 		return s;
