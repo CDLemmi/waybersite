@@ -75,11 +75,12 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         div.querySelector("#tblTime").textContent=time;
     }
 
-    //Display the correct scores and the appropriate color
+    //Display the correct scores and the appropriate color for the teams
     let tblScore1 = div.querySelector("#tblScore1");
     let tblScore2 = div.querySelector("#tblScore2");
     if(score1 != -1) tblScore1.textContent=score1;
     if(score2 != -1) tblScore2.textContent=score2;
+
 
     if(score1 > score2)
     {
@@ -92,10 +93,25 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
         tblScore2.style.color = "green";
     }
 
+    //Setup team header
+    const spTeam1 = div.querySelector("#spTeam1");
+    const spTeam2 = div.querySelector("#spTeam2")
+    spTeam1.textContent = team1;
+    spTeam2.textContent = team2;
+    if(finalWin == 0)
+    {
+        spTeam1.style.color = "green";
+        spTeam2.style.color = "red";
+    }
+    else if(finalWin == 1)
+    {
+        spTeam2.style.color = "green";
+        spTeam1.style.color = "red";
+    }
+
     //Flags
     div.querySelector("#imgTeam1").src = `https://flagcdn.com/${countryDict[team1]}.svg`;
     div.querySelector("#imgTeam2").src = `https://flagcdn.com/${countryDict[team2]}.svg`;
-    div.querySelector("#tblMatch").textContent = `${team1} vs. ${team2}`
 
     //Display the predictions
     let tblPred1 =  div.querySelector("#tblPred1");
