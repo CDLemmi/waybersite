@@ -38,10 +38,6 @@ async function onLoad()
 
         //Scroll to the current day
         scrollTo({top: scroll});
-
-        //Load current news
-        const newsResponse = await fetch("/content/news.txt");
-        taNews.textContent = await newsResponse.text();
     };
 }
 
