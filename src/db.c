@@ -169,6 +169,33 @@ DB_RESULT db_get_group_result(Database db, char* in_team, int* out_position)
 	return DB_DONE;
 }
 
+DB_RESULT db_get_group_placements(Database db, char* in_group, char** out_teams)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT team, position FROM group_results WHERE `group` = ?", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, in_group, -1, SQLITE_STATIC);
+
+	for(int i = 0; i < 4; i++)
+	{
+		int result = sqlite3_step(s);
+		if(result == SQLITE_ROW)
+		{
+			//The data should come in order, but just to be sure the pos is taken seperately
+			char* team = sqlite3_column_text(s, 0);
+			int pos = sqlite3_column_int(s, 1);
+			out_teams[pos - 1] = strdup((char*)team);
+		}
+		else if(result == SQLITE_DONE)
+		{
+			return DB_DONE;
+		}
+		else
+		{
+			return DB_ERROR;
+		}
+	}
+}
+
 DB_RESULT db_get_teams(Database db, char** teams)
 {
 	sqlite3_stmt* s;

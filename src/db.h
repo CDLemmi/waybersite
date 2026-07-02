@@ -61,6 +61,8 @@ DB_RESULT db_get_teams(Database db, char** out_teams);
 
 DB_RESULT db_get_group_result(Database db, char* in_team, int* out_position);
 
+DB_RESULT db_get_group_placements(Database db, char* in_group, char** out_teams);
+
 // user management
 
 DB_RESULT db_create_user(Database db, char* name, char* pw, int admin, int* out_id);

@@ -79,7 +79,15 @@ function addGroup(id, team1, team2, team3, team4)
     const g = new Group(id, team1, team2, team3, team4);
     const divGroup = tplGroup.content.cloneNode(true);
     divGroup.querySelector("#tblGroup").textContent = `Gruppe ${id}`;
-    divGroup.querySelector("#divGroup").id = `divGroup_${id}`;
+
+    const div = divGroup.querySelector("#divGroup");
+    div.id = `divGroup_${id}`;
+
+    //Add redirect to group predictions page
+    div.addEventListener("click", () => {
+        document.location.assign(`/group_predictions.html?group=${id}`);
+    })
+    div.style.cursor="pointer";
 
     let i = 1;
     g.teams.forEach(element => {

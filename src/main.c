@@ -258,6 +258,66 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* s = cJSON_Print(json);
 		return s;
 	}
+	else if(!strcmp(api_endpoint, "group-preds-page"))
+	{
+		char* group = cJSON_GetObjectItem(request_body, "group")->valuestring;
+
+		//Default page content
+		cJSON* json = cJSON_CreateObject();
+		int user_points;
+		db_get_points_user(db, user.id, &user_points);
+		cJSON_AddNumberToObject(json, "points", user_points);
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
+
+		printf("%s", group);
+
+		//Get final group placements
+		char* teams[4];
+		db_get_group_placements(db, group, teams);
+
+		cJSON_AddItemToObject(json, "team1", cJSON_CreateString(teams[0]));
+		cJSON_AddItemToObject(json, "team2", cJSON_CreateString(teams[1]));
+		cJSON_AddItemToObject(json, "team3", cJSON_CreateString(teams[2]));
+		cJSON_AddItemToObject(json, "team4", cJSON_CreateString(teams[3]));
+
+		//Add array with all user predictions
+		int user_ids[128];
+		int user_count;
+		db_get_user_list(db, user_ids, &user_count);
+
+		cJSON* array = cJSON_AddArrayToObject(json, "predictions");
+
+		for(int i = 0; i < user_count; i++) 
+		{
+			int user_id = user_ids[i];
+			char* preds[4];
+			for(int j = 0; j < 4; j++)
+			{
+				int pos = 0;
+				char* t = teams[j];
+				db_get_group_bet(db, user_id, t, &pos);
+				preds[pos - 1] = t;
+			} 
+
+			char name[128];
+			char hash[HASH_SIZE];
+			int admin;
+			db_get_user(db, user_ids[i], name, hash, &admin);
+
+			cJSON* entry = cJSON_CreateObject();
+			cJSON_AddItemToObject(entry, "username", cJSON_CreateString(name));
+			cJSON_AddItemToObject(entry, "pred1", cJSON_CreateString(preds[0]));
+			cJSON_AddItemToObject(entry, "pred2", cJSON_CreateString(preds[1]));
+			cJSON_AddItemToObject(entry, "pred3", cJSON_CreateString(preds[2]));
+			cJSON_AddItemToObject(entry, "pred4", cJSON_CreateString(preds[3]));
+
+			cJSON_AddItemToArray(array, entry);
+		}
+
+		char* s = cJSON_Print(json);
+		return s;
+	}
 	else if(!strcmp(api_endpoint, "set-match-score")) 
 	{
 		if(user.admin == 0) {
