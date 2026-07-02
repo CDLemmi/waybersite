@@ -106,6 +106,7 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     let btnSavePred = div.querySelector("#btnSavePred");
     btnSavePred.addEventListener("click", btnSavePred_Click)
     btnSavePred.dataset.id = id;
+    btnSavePred.id = `btnSavePred_${id}`;
 
     div.querySelector("#btnPred1Up").addEventListener("click", () => {
         tblPred1.textContent = (parseInt(tblPred1.textContent) + 1);
@@ -128,7 +129,7 @@ function addMatch(id, group, dateTime, team1, team2, pred1, pred2, score1, score
     {
         //Hide all controls for changing the score when the match has started
         const divBottomRow = div.querySelector("#divBottomRow");
-        divBottomRow.removeChild(div.querySelector("#btnSavePred"));
+        divBottomRow.removeChild(btnSavePred);
 
         div.querySelector("#btnPred1Up").style.visibility = "hidden";
         div.querySelector("#btnPred2Up").style.visibility = "hidden";
@@ -156,6 +157,7 @@ async function btnSavePred_Click(event)
     const id = event.currentTarget.dataset.id;
     let tblPred1 = document.getElementById(`tblPred1_${id}`);
     let tblPred2 = document.getElementById(`tblPred2_${id}`);
+    let btnSavePred = document.getElementById(`btnSavePred_${id}`);
 
     if(tblPred1.textContent === "" || tblPred2.textContent === "")
     {
@@ -166,5 +168,8 @@ async function btnSavePred_Click(event)
     const data = {"id":  parseInt(id), "prediction1": parseInt(tblPred1.textContent), "prediction2": parseInt(tblPred2.textContent)};
     const response = await post_api("place-bet", data);
 
-    if(response.status === "200") btnSavePred.style.visibility = "visible";
+    if(response.status == 200) 
+    {
+        btnSavePred.style.visibility = "visible";
+    }
 }

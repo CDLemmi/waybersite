@@ -92,6 +92,9 @@ function addGroup(id, team1, team2, team3, team4)
     const divGroup = tplGroup.content.cloneNode(true);
     divGroup.querySelector("#tblGroup").textContent = `Gruppe ${id}`;
 
+    const btnSavePred = divGroup.querySelector("#btnSavePred");
+    btnSavePred.id = `btnSavePred_${id}`;
+
     const div = divGroup.querySelector("#divGroup");
     div.id = `divGroup_${id}`;
 
@@ -109,7 +112,7 @@ function addGroup(id, team1, team2, team3, team4)
 
     if(lockGroup(id))
     {
-        divGroup.querySelector("#btnSavePred").style.visibility = "hidden";
+        btnSavePred.style.visibility = "hidden";
 
         //Show received points
         const tblPoints = divGroup.querySelector("#tblPoints");
@@ -130,7 +133,7 @@ function createTeamDiv(divGroup, num, group, team)
     tblTeam.textContent = team === "Bosnien-Herzegowina" ? "Bosnien-H." : team;
     div.querySelector("#imgTeam").src = `https://flagcdn.com/${countryDict[team]}.svg`
 
-    const btnSavePred = divGroup.querySelector("#btnSavePred");
+    const btnSavePred = divGroup.querySelector(`#btnSavePred_${group.id}`);
     btnSavePred.dataset.id = group.id;
     btnSavePred.addEventListener("click", btnSavePred_Click);
 
@@ -200,6 +203,7 @@ async function btnSavePred_Click(event)
 {
     const id = event.currentTarget.dataset.id;
     const g = getGroup(id);
+    const btnSavePred = document.getElementById(`#btnSavePred_${id}`);
 
     let i = 1;
     for (const e of g.teams) 
@@ -215,6 +219,7 @@ async function btnSavePred_Click(event)
         i++;
     }
 
+    btnSavePred.style.visibility = "hidden";
     alert("Die Vorhersage wurde erfolgreich gespeichert!");
 }
 
