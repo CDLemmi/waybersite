@@ -306,3 +306,17 @@ int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2
 	}
     return points;
 }
+
+int get_default_pos(Database db, char* team)
+{
+	char* group;
+	db_get_group_id(db, team, &group);
+
+	char* teams[4];
+	db_get_group_defaults(db, group, teams);
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(strcmp(teams[i], team) == 0) return i + 1;
+	} 
+}

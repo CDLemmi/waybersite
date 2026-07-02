@@ -1,4 +1,5 @@
 #include "db.h"
+#include "game.h"
 
 #include <stdio.h> 
 #include <stdlib.h>
@@ -221,6 +222,34 @@ DB_RESULT db_get_teams(Database db, char** teams)
 	}
 }
 
+DB_RESULT db_get_group_defaults(Database db, char* in_group, char** out_teams)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT team FROM groups WHERE `group` = ?", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, in_group, -1, SQLITE_STATIC);
+
+	for(int i = 0; i < 4; i++)
+	{
+		//This assumes that the order that the teams are stored in the database is the default order
+		int result = sqlite3_step(s);
+
+		if(result == SQLITE_ROW)
+		{
+			char* team = sqlite3_column_text(s, 0);
+			out_teams[i] = strdup((char*)team);
+		}
+		else if(result == SQLITE_DONE)
+		{
+			return DB_DONE;
+		}
+		else
+		{
+			
+			return DB_ERROR;
+		}
+	}
+}
+
 DB_RESULT db_create_game_tables(Database db) {
 	char* s1 = 
 		"CREATE TABLE IF NOT EXISTS bets ("
@@ -377,9 +406,31 @@ DB_RESULT db_get_group_bet(Database db, int user_id, char* team, int* pred) {
 	sqlite3_bind_int(s, 2, user_id);
 	if(sqlite3_step(s) == SQLITE_ROW) {
 		*pred = sqlite3_column_int(s, 0);
+	}
+	else
+	{
+		*pred = get_default_pos(db, team);
+	}
+
+	return DB_DONE;
+}
+
+DB_RESULT db_get_group_id(Database db, char* in_team, char** out_group)
+{
+	sqlite3_stmt* s;
+	sqlite3_prepare_v2(db.db, "SELECT `group` FROM groups WHERE team = ?;", -1, &s, NULL);
+	sqlite3_bind_text(s, 1, in_team, -1, SQLITE_STATIC);
+
+	if(sqlite3_step(s) == SQLITE_ROW)
+	{
+		char* group = sqlite3_column_text(s, 0);
+		*out_group = strdup((char*)group);
 		return DB_DONE;
 	}
-	return DB_NO_RESULT;
+	else
+	{
+		return DB_ERROR;
+	}
 }
 
 DB_RESULT db_place_group_bet(Database db, int user_id, char* team, int pred) {
