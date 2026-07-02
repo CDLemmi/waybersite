@@ -2,5 +2,5 @@ main
 build/
 database.db
 .vscode/
-web/legal.json
-web/news.txt
+web/content/legal.json
+web/content/news.txt

@@ -5,7 +5,7 @@ onload();
 
 async function onload()
 {
-    const response = await fetch("/legal.json");
+    const response = await fetch("/content/legal.json");
     const data = await response.json();
 
     tblAddress.innerHTML = `${data.impressum.name}<br>${data.impressum.address}<br>${data.impressum.city}`;

@@ -40,7 +40,7 @@ async function onLoad()
         scrollTo({top: scroll});
 
         //Load current news
-        const newsResponse = await fetch("/news.txt");
+        const newsResponse = await fetch("/content/news.txt");
         taNews.textContent = await newsResponse.text();
     };
 }
