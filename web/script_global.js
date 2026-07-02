@@ -260,3 +260,8 @@ function isCurrentDay(dateTime)
         && currentDate.getMonth() == dateTimeObj.getMonth()
         && currentDate.getFullYear() == dateTimeObj.getFullYear());
 }
+
+function hasDuplicates(array) 
+{
+    return new Set(array).size !== array.length;
+}

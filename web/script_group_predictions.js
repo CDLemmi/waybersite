@@ -54,6 +54,8 @@ async function onLoad()
         const predictions = data.predictions;
         if(typeof predictions !== "undefined")
         {
+            console.log(predictions);
+
             predictions.forEach(element => {
                 addEntryToTable(element.username, element.pred1, element.pred2, element.pred3, element.pred4);
             });
@@ -73,18 +75,20 @@ function addEntryToTable(username, pred1, pred2, pred3, pred4)
     const cellUsername = row.insertCell();
 
     const preds = [pred1, pred2, pred3, pred4];
+    const isValid = !hasDuplicates(preds); //If one of the preds is duplicate it means that the person forgot to guess and should be displayed as all zeros. This is only a sloppy fix as its still handled weirdly on the server side. But it should work for now.
+
     let points = 0;
 
     for(i = 0; i < 4; i++)
     {
         const cell = row.insertCell();
-        const a = preds.findIndex((e) => e === teams[i]);
+        const a = preds.findIndex((e) => e === teams[i]); //Find the index of the team in the predictions to get the predicted pos
 
-        cell.textContent = a + 1;
+        cell.textContent = isValid ? a + 1 : 0;
 
         //Show color for wrong/right
         cell.style.fontWeight = "bold";
-        if(a === i)
+        if(a === i && isValid)
         {
             cell.style.color = "green";
             points += 2;
