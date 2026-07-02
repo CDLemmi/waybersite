@@ -113,7 +113,7 @@ function addGroup(id, team1, team2, team3, team4)
 
         //Show received points
         const tblPoints = divGroup.querySelector("#tblPoints");
-        tblPoints.textContent = `Punkte: ${calcPoints(g)}`;
+        tblPoints.textContent = `+ ${calcPoints(g)} Punkte`;
         tblPoints.style.visibility = "visible";
     }
 
