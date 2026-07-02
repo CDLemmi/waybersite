@@ -182,8 +182,9 @@ DB_RESULT db_get_group_placements(Database db, char* in_group, char** out_teams)
 		{
 			//The data should come in order, but just to be sure the pos is taken seperately
 			char* team = sqlite3_column_text(s, 0);
-			int pos = sqlite3_column_int(s, 1);
-			out_teams[pos - 1] = strdup((char*)team);
+			int pos = sqlite3_column_int(s, 1) - 1;
+			if(pos < 0) pos = 0;
+			out_teams[pos] = strdup((char*)team);
 		}
 		else if(result == SQLITE_DONE)
 		{

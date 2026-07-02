@@ -270,8 +270,6 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
 		cJSON_AddNumberToObject(json, "admin", user.admin);
 
-		printf("%s", group);
-
 		//Get final group placements
 		char* teams[4];
 		db_get_group_placements(db, group, teams);
@@ -297,7 +295,11 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 				int pos = 0;
 				char* t = teams[j];
 				db_get_group_bet(db, user_id, t, &pos);
-				preds[pos - 1] = t;
+
+				pos -= 1;
+				if(pos < 0) pos = 0;
+
+				preds[pos] = t;
 			} 
 
 			char name[128];
