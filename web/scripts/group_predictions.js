@@ -38,7 +38,7 @@ async function onLoad()
         teams = [data.team1, data.team2, data.team3, data.team4];
         
         //List teams in header
-        for(i = 0; i < 4; i++)    
+        for(let i = 0; i < 4; i++)    
         {
             const th = document.createElement("th");
             th.textContent = teams[i];
@@ -77,7 +77,7 @@ function addEntryToTable(username, pred1, pred2, pred3, pred4)
 
     let points = 0;
 
-    for(i = 0; i < 4; i++)
+    for(let i = 0; i < 4; i++)
     {
         const cell = row.insertCell();
         const a = preds.findIndex((e) => e === teams[i]); //Find the index of the team in the predictions to get the predicted pos

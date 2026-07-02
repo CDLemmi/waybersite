@@ -186,7 +186,7 @@ function getResult(team)
     //Go through all group results and get the position that a team finished in
     for(const e of groupResults) 
     {
-        for(i = 0; i < e.teams.length; i++)
+        for(let i = 0; i < e.teams.length; i++)
         {
             if(e.teams[i] === team) 
             {
@@ -256,7 +256,7 @@ function calcPoints(group)
 {
     let points = 0;
 
-    for(i = 0; i < group.teams.length; i++)
+    for(let i = 0; i < group.teams.length; i++)
     {
         const team = group.teams[i];
         if(i + 1 == getResult(team)) points += 2;
