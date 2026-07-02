@@ -274,7 +274,14 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 
 		//Get final group placements
 		char* teams[4];
-		db_get_group_placements(db, group, teams);
+
+		int res = db_get_group_placements(db, group, teams);
+		if(res == DB_ERROR || res == DB_NO_RESULT)
+		{
+			//If getting group placements fails (e.g. the group is invalid)
+			char* s = cJSON_Print(json);
+			return s;
+		}
 
 		cJSON_AddItemToObject(json, "team1", cJSON_CreateString(teams[0]));
 		cJSON_AddItemToObject(json, "team2", cJSON_CreateString(teams[1]));

@@ -189,6 +189,7 @@ DB_RESULT db_get_group_placements(Database db, char* in_group, char** out_teams)
 		}
 		else if(result == SQLITE_DONE)
 		{
+			if(i == 0) return DB_NO_RESULT;
 			return DB_DONE;
 		}
 		else
