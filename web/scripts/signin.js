@@ -14,7 +14,7 @@ async function btnLogin_Click()
 {
     if(tbPassword.value === "" || tbUsername.value === "") 
     {
-        alert("Bitte gib einen Benutzernamen und ein Passwort ein");
+        showNotification("Fehler", "Bitte gib einen Benutzernamen und ein Passwort ein");
         return;
     }
 
@@ -24,7 +24,7 @@ async function btnLogin_Click()
     
     if(response.status === 401)
     {
-        alert("Falsche Kombination aus Benutzername und Passwort");
+        showNotification("Fehler", "Falsche Kombination aus Benutzername und Passwort");
     }
     else if(response.status === 200)
     {
@@ -32,6 +32,6 @@ async function btnLogin_Click()
     }
     else
     {
-        alert("Unbekannter Fehler beim Anmelden.")
+        showNotification("Fehler", "Unbekannter Fehler beim Anmelden");
     }
 }

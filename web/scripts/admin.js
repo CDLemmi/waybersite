@@ -115,7 +115,7 @@ async function btnAddUser_Click()
 {
     if(tbAddUserPw.value === "" || tbAddUserName.value === "")
     {
-        alert("Bitte gib einen Benutzernamen und ein Passwort für den neuen Benutzer ein!");
+        showNotification("Fehler", "Bitte gib einen Benutzernamen und ein Passwort für den neuen Benutzer ein!");
         return;
     }
 
@@ -133,7 +133,7 @@ async function btnResetPw_Click(event)
 
     if(tbResetPw.value === "")
     {
-        alert("Bitte gib ein neues Passwort an!");
+        showNotification("Fehler", "Bitte gib ein neues Passwort an!");
         return;
     }
 
@@ -149,7 +149,7 @@ async function btnSaveUser_Click(event)
 
     if(tbUserName.value === "")
     {
-        alert("Bitte gib einen neuen Benutzernamen an!");
+        showNotification("Fehler", "Bitte gib einen neuen Benutzernamen an!");
         return;
     }
 
@@ -195,7 +195,7 @@ async function btnUpdateMatch_Click()
 {
     if(tbMatchId.value === "" || tbScore1.value === "" || tbScore2.value === "" || tbWinner.value === "")
     {
-        alert("Bitte fülle alle erforderlichen Felder für das Aktualisieren eines Matches aus");
+        showNotification("Fehler", "Bitte fülle alle erforderlichen Felder für das Aktualisieren eines Matches aus!");
         return;
     }
 
@@ -203,11 +203,10 @@ async function btnUpdateMatch_Click()
 
     await post_api("set-match-score", data);
     await post_api("update-points", {}, false);
-
-    window.location.reload();
 }
 
 async function btnUpdatePoints_Click()
 {
     await post_api("update-points", {});
+    showNotification("Anfrage gesendet", "Anfrage zum Aktualisieren der Punkte wurde gesendet!");
 }

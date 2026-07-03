@@ -41,7 +41,7 @@ async function onLoad()
     const response = await fetch("/api/group-page");
     if(response.status === 400)
     {
-        alert("Interner Fehler!");     
+        showNotification("Fehler 400", "Interner Serverfehler");
     }
     else if(response.status === 401)
     {
@@ -213,14 +213,14 @@ async function btnSavePred_Click(event)
 
         if(response.status !== 200)
         {
-            alert(`Beim Speichern ist ein Fehler aufgetreten: ${response.status}`);
+            showNotification(`Fehler ${response.status}`, "Beim Speichern ist ein Fehler aufgetreten");
             return;
         }
         i++;
     }
 
     btnSavePred.style.visibility = "hidden";
-    alert("Die Vorhersage wurde erfolgreich gespeichert!");
+    showNotification(`Erfolg`, "Die Vorhersage wurde erfolgreich gespeichert!");
 }
 
 function lockGroup(group)

@@ -20,7 +20,7 @@ async function onLoad()
     }
     else if(response.status === 400)
     {
-        alert("Interner Serverfehler.")
+        showNotification("Fehler 400", "Interner Serverfehler");
     }
     else if(response.status === 200)
     {
@@ -197,7 +197,7 @@ async function btnSavePred_Click(event)
 
     if(tblPred1.textContent === "" || tblPred2.textContent === "")
     {
-        alert("Bitte gib für beide Teams eine Vorhersage ab!");
+        showNotification("Fehler", "Bitte gib für beide Teams eine Vorhersage ab!");
         return;
     }
 

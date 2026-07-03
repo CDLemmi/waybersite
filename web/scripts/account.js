@@ -36,13 +36,13 @@ async function btnSavePw_Click()
 {
     if(tbPwNew.value === "") 
     {
-        alert("Bitte gib ein neues Passwort ein");
+        showNotification("Fehler", "Bitte gib ein neues Passwort ein!");
         return;
     }
 
     if(tbPwNewConfirm.value !== tbPwNew.value) 
     {
-        alert("Die eingegebenen Passwörter stimmen nicht überein!");
+        showNotification("Fehler", "Die eingegebenen Passwörter stimmen nicht überein!");
         return;
     }
 
@@ -51,16 +51,16 @@ async function btnSavePw_Click()
 
     if(result.status === 401)
     {
-        alert("Das eingegebene aktuelle Passwort ist falsch!")
+        showNotification("Fehler", "Das eingegebene aktuelle Passwort ist falsch!");
     }
     else if(result.status === 200)
     {
-        alert("Das Passwort wurde erfolgreich geändert!")
+        showNotification("Passwort geändert", "Das Passwort wurde erfolgreich geändert!");
         window.location.replace("/signin.html")
     }
     else
     {
-        alert("Unbekannter Fehler beim Ändern des Passworts!")
+        showNotification("Fehler", "Unbekannter Fehler beim Ändern des Passworts!");
     }
 }
 
@@ -68,7 +68,7 @@ async function btnSaveUser_Click()
 {
     if(tbNewUser.value === "")
     {
-        alert("Bitte gib einen neuen Benutzernamen ein!");
+        showNotification("Fehler", "Bitte gib einen neuen Benutzernamen ein!");
         return;
     }
 

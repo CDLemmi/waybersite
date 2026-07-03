@@ -21,7 +21,7 @@ async function onLoad()
     }
     else if(response.status === 400)
     {
-        alert("Interner Serverfehler.")
+        showNotification("Fehler 400", "Interner Serverfehler");
     }
     else if(response.status === 200)
     {

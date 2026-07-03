@@ -51,6 +51,7 @@ let countryDict = {
 
 let userBoxTimeout = null;
 let userBox = null;
+let notificationTimeout = null;
 
 onLoad();
 
@@ -101,20 +102,20 @@ async function post_api(api, body, verbose = true)
     {
         if(result.status === 200)
         {
-            alert("Der Vorgang wurde erfolgreich ausgeführt");
+            showNotification("Erfolg", "Der Vorgang wurde erfolgreich ausgeführt");
         }
         else if(result.status === 401)
         {
-            alert("Fehler: Nicht angemeldet");
+            showNotification("Fehler 401", "Nicht angemeldet");
         }
         else if(result.status === 400)
         {
             const data = result.json();
-            alert(`Es ist ein interner Serverfehler aufgetreten: ${data.errorMes}`);
+            showNotification("Fehler 400", `Internet Serverfehler: ${data.errorMes}!`);
         }
         else
         {
-            alert("Ein unbekannter Fehler ist aufgetreten!");
+            showNotification("Fehler", "Ein unbekannter Fehler ist aufgetreten");
         } 
     }
     
@@ -187,6 +188,63 @@ function getUserBox()
     divUserBox.appendChild(btnLogout);
 
     return divUserBox;
+}
+
+function showNotification(header, message)
+{
+
+    //Try to get rid of existing notifications
+    hideNotification();
+
+    //Create a new notification
+    const divNoti = document.createElement("div");
+    divNoti.id="divNotification";
+    
+    //Notification header
+    const tblHeader = document.createElement("p");
+    tblHeader.textContent = header;
+    tblHeader.classList.add("font_large");
+    tblHeader.classList.add("font_bold");
+    tblHeader.style.marginTop = "20px";
+    tblHeader.style.marginLeft = "20px";
+    divNoti.appendChild(tblHeader);
+
+    //Actual content textblock
+    const tblContent = document.createElement("p");
+    tblContent.textContent = message;
+    tblContent.classList.add("font_large");
+    tblContent.style.maxWidth = "550px";
+    tblContent.style.marginTop = "-10px";
+    tblContent.style.marginLeft = "20px";
+    divNoti.appendChild(tblContent);
+
+    //Button for closing the notification
+    const btnOK = document.createElement("button");
+    btnOK.textContent = "Okay";
+    btnOK.style.height = "25px";
+    btnOK.style.marginLeft = "20px";
+    btnOK.style.marginRight = "20px"
+    btnOK.style.marginBottom = "20px";
+    btnOK.style.fontSize = "16px";
+    btnOK.style.fontWeight = "bold";
+    btnOK.addEventListener("click", () => { document.body.removeChild(divNoti);});
+
+    divNoti.appendChild(btnOK);
+
+    document.body.appendChild(divNoti);
+
+    notificationTimeout = setTimeout(hideNotification, 3000);
+}
+
+function hideNotification()
+{
+    clearTimeout(notificationTimeout);
+
+    const divExistingNoti = document.getElementById("divNotification");
+    if(divExistingNoti != null)
+    {
+        document.body.removeChild(divExistingNoti);
+    }
 }
 
 function logOut()
