@@ -563,6 +563,18 @@
       "time": "2026-07-07 02:00:00",
       "team1": "USA",
       "team2": "Belgien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-07 18:00:00",
+      "team1": "Argentinien",
+      "team2": "Ägypten"
+    },
+    {
+      "group": "",
+      "time": "2026-07-07 22:00:00",
+      "team1": "Schweiz",
+      "team2": "Kolumbien"
     }
   ]
 }
