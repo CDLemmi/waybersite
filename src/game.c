@@ -313,7 +313,16 @@ int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2
 
 		if(predWin == finalWin && predScoreWinner != predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
 	}
+
+	apply_points_multiplier(match_id, &points)
+
     return points;
+}
+
+int apply_points_multiplier(int match_id, int* points)
+{
+	if(match_id == 101 || match_id == 102 || match_id == 103) *points *= 2;
+	if(match_id == 104) *points *= 3;
 }
 
 int get_default_pos(Database db, char* team)

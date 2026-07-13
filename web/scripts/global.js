@@ -298,7 +298,15 @@ function calcPoints(match_id, pred1, pred2, score1, score2, predWin, finalWin)
 
     }
 
+    points = applyPointsMultiplier(match_id, points);
+
     return points;
+}
+
+function applyPointsMultiplier(match_id, points)
+{
+    if(match_id === 101 || match_id === 102 || match_id === 103) return (points *= 2);
+	if(match_id === 104) return (points *= 3);
 }
 
 function hasMatchStarted(dateTime)
