@@ -288,14 +288,8 @@ function calcPoints(match_id, pred1, pred2, score1, score2, predWin, finalWin)
     if(match_id >= 73)
     {
         if(predWin === finalWin && predScoreWinner === predWin //2 points for having guessed the same on predWin and score, or when predicting tie on score and correct winner
-            || predWin === finalWin && predScoreWinner === -1) 
-        {
-            points += 2;
-            return points;
-        }
-
-        if(predWin === finalWin && predScoreWinner !== predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
-
+            || predWin === finalWin && predScoreWinner === -1) points += 2;
+        else if(predWin === finalWin && predScoreWinner !== predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
     }
 
     points = applyPointsMultiplier(match_id, points);
@@ -305,8 +299,9 @@ function calcPoints(match_id, pred1, pred2, score1, score2, predWin, finalWin)
 
 function applyPointsMultiplier(match_id, points)
 {
-    if(match_id === 101 || match_id === 102 || match_id === 103) return (points *= 2);
-	if(match_id === 104) return (points *= 3);
+    if(match_id == 101 || match_id == 102 || match_id == 103) return (points * 2);
+	if(match_id == 104) return (points * 3)
+    return points;
 }
 
 function hasMatchStarted(dateTime)
