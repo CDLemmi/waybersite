@@ -575,6 +575,42 @@
       "time": "2026-07-07 22:00:00",
       "team1": "Schweiz",
       "team2": "Kolumbien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-09 22:00:00",
+      "team1": "Frankreich",
+      "team2": "Marokko"
+    },
+    {
+      "group": "",
+      "time": "2026-07-10 21:00:00",
+      "team1": "Spanien",
+      "team2": "Belgien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-11 23:00:00",
+      "team1": "Norwegen",
+      "team2": "England"
+    },
+    {
+      "group": "",
+      "time": "2026-07-12 03:00:00",
+      "team1": "Argentinien",
+      "team2": "Schweiz"
+    },
+    {
+      "group": "",
+      "time": "2026-07-14 21:00:00",
+      "team1": "Frankreich",
+      "team2": "Spanien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-15 21:00:00",
+      "team1": "England",
+      "team2": "Argentinien"
     }
   ]
 }
