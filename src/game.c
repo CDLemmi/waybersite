@@ -305,16 +305,11 @@ int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2
 	if(match_id >= 73)
 	{
     	if((predWin == finalWin && predScoreWinner == predWin) //2 points for having guessed the same on predWin and score, or when predicting tie on score and correct winner
-        	|| (predWin == finalWin && predScoreWinner == -1)) 
-			{
-				points += 2;
-				return points;
-			}
-
-		if(predWin == finalWin && predScoreWinner != predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
+        	|| (predWin == finalWin && predScoreWinner == -1)) points += 2;
+		else if(predWin == finalWin && predScoreWinner != predWin) points += 1; //1 points for playing "safe", predicting opposite on score and predWin
 	}
 
-	apply_points_multiplier(match_id, &points)
+	apply_points_multiplier(match_id, &points);
 
     return points;
 }

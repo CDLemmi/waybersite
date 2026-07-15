@@ -20,6 +20,8 @@ void update_points(Database db);
 
 int calc_points_match(int match_id, int pred1, int pred2, int score1, int score2, int predWin, int finalWin);
 
+int apply_points_multiplier(int match_id, int* points);
+
 int get_default_pos(Database db, char* team);
 
 #endif
