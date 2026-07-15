@@ -611,6 +611,18 @@
       "time": "2026-07-15 21:00:00",
       "team1": "England",
       "team2": "Argentinien"
+    },
+    {
+      "group": "",
+      "time": "2026-07-18 23:00:00",
+      "team1": "Frankreich",
+      "team2": "England"
+    },
+    {
+      "group": "",
+      "time": "2026-07-19 21:00:00",
+      "team1": "Spanien",
+      "team2": "Argentinien"
     }
   ]
 }
