@@ -1,2 +1,2 @@
 //Home page acts as a redirect
-document.location.replace("/playoffs.html");
+document.location.replace("/final_results.html");

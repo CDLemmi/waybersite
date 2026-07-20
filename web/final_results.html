@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="stylesheets.css">
 <script src="scripts/global.js" defer></script>
-<script src="scripts/match_predictions.js" defer></script>
+<script src="scripts/final_results.js" defer></script>
 <html>
     <head>
-        <title>Waybersite - Vorhersagen</title>
+        <title>Waybersite - Home</title>
     </head>   
     <body>
         <div class="header">
@@ -22,14 +22,18 @@
             <div id="seperator" style="margin-top: -25px;"></div>
         </div>
         <div class="content">
-            <p id="tblContentHeader" class="font_large"></p>
-            <p id="tblContentDesc" class="font_medium font_bold">Hier kannst du die Vorhersagen aller Mitspieler für das ausgewählte Match betrachten!</p>
-            <div class="inline_row">
-                <table id="tabPredictions">
-                    <th style="width: 200px">Name</th>
-                    <th id="thPred" style="width: 100px">Vorhersage</th>
-                    <th style="width: 100px">Punkte</th>
-                </table>
+            <p class="font_large">Finale Ergebnisse</p>
+            <p class="font_medium font_bold">Hier siehst du die Ergebnisse des Waybersite Tippspiel-Projekts. Vielen Dank an alle, die teilgenommen haben!</p>
+            <div class="inline_column">
+                <img id="imgPodium" style="width: 600px; height: 400px; object-fit: contain;">
+                <p class="font_medium" style="margin-top: 50px;">Finales Leaderboard:</p>
+                <div class="inline_column">
+                    <table id="tabLeaderboard">
+                        <th style="width: 40px;"></th>
+                        <th style="width: 300px;">Name</th>
+                        <th style="width: 100px;">Punkte</th>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="footer">

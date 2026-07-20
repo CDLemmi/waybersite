@@ -192,6 +192,39 @@ char* handle_api_request(cJSON* request_body, char* api_endpoint, User user, int
 		char* s = cJSON_Print(json);
 		return s;
 	}
+	else if(!strcmp(api_endpoint, "final-results-page"))
+	{
+		//Default page content
+		cJSON* json = cJSON_CreateObject();
+		int user_points;
+		db_get_points_user(db, user.id, &user_points);
+		cJSON_AddNumberToObject(json, "points", user_points);
+		cJSON_AddItemToObject(json, "username", cJSON_CreateString(user.name));
+		cJSON_AddNumberToObject(json, "admin", user.admin);
+
+		//Leaderboard
+		int user_ids[128];
+		int points[128];
+		int count;
+
+		db_get_points(db, user_ids, points, &count);
+
+		cJSON* leaderboard = cJSON_AddArrayToObject(json, "leaderboard");
+		for(int i = 0; i < count; i++)
+		{
+			char name[128];
+			char hash[HASH_SIZE];
+			int admin;
+			db_get_user(db, user_ids[i], name, hash, &admin);
+			cJSON* entry = cJSON_CreateObject();
+			cJSON_AddItemToObject(entry, "name", cJSON_CreateString(name));
+			cJSON_AddNumberToObject(entry, "points", points[i]);
+			cJSON_AddItemToArray(leaderboard, entry);
+		}
+
+		char* s = cJSON_Print(json);
+		return s;
+	}
 	else if(!strcmp(api_endpoint, "match-preds-page"))
 	{
 		int match_id = cJSON_GetObjectItem(request_body, "match_id")->valueint;
@@ -497,6 +530,8 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			strcpy(response.content_type, "application/javascript");
 		} else if(!strcmp(ext, "jpg")) {
 			strcpy(response.content_type, "image/jpeg");
+		} else if(!strcmp(ext, "png")) {
+			strcpy(response.content_type, "image/png");
 		} else if(!strcmp(ext, "json")) {
 			strcpy(response.content_type, "application/json");
 		} else {
@@ -511,8 +546,8 @@ HTTPResponse handle_request(HTTPRequest request, Database db) {
 			http_response_set_content_str(&response, "<html><body><h1>Error 404</h1>page not found</body></html>");
 		} else {
 			FILE* file = fopen(path, "rb");
-			char content[16384];
-			int content_size = fread(content, sizeof(char), 16384, file);
+			char content[163840];
+			int content_size = fread(content, sizeof(char), 163840, file);
 			http_response_set_content(&response, content, content_size);
 			response.status_code = 200;
 			fclose(file);
